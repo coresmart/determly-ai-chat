@@ -16,13 +16,14 @@ final class Session
         string $agentName = 'Assistant',
         ?\Closure $id = null,
         ?\Closure $clock = null,
+        ?string $executionId = null,
     ): void {
         $ids = $id ?? self::randomId();
         $now = $clock ?? self::isoNow();
         $started = $now();
         $emit = new Emitter(
             $writer,
-            $ids('exec'),
+            $executionId ?? $ids('exec'),
             $ids('turn'),
             $agentId,
             $agentName,

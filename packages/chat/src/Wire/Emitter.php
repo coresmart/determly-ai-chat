@@ -168,6 +168,54 @@ final class Emitter
         ]);
     }
 
+    /**
+     * Pause the turn. The widget resumes with POST {apiUrl}/resume or the approval URL.
+     * No execution_complete frame is sent.
+     *
+     * @param  array<string, mixed>  $fields
+     */
+    public function pause(string $reason, array $fields): void
+    {
+        if ($this->finished) {
+            return;
+        }
+        $this->closeTextBlock();
+        $this->finished = true;
+        $this->send('step_await', ['awaitReason' => $reason, 'executionId' => $this->executionId] + $fields);
+    }
+
+    /**
+     * @param  array<string, mixed>  $parameters
+     */
+    public function approvalStart(string $approvalId, string $toolName, string $description, array $parameters): void
+    {
+        if ($this->finished) {
+            return;
+        }
+        $this->closeTextBlock();
+        $this->openTurn();
+        $this->send('agent_approval_start', [
+            'approvalId' => $approvalId,
+            'toolName' => $toolName,
+            'toolType' => 'local',
+            'description' => $description,
+            'parameters' => $parameters,
+            'executionId' => $this->executionId,
+        ]);
+    }
+
+    public function approvalComplete(string $approvalId, string $decision): void
+    {
+        if ($this->finished) {
+            return;
+        }
+        $this->send('agent_approval_complete', [
+            'approvalId' => $approvalId,
+            'decision' => $decision,
+            'executionId' => $this->executionId,
+        ]);
+    }
+
     public function open(): void
     {
         $this->send('execution_start', [

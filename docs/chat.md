@@ -71,9 +71,13 @@ A text turn:
 6. `turn_complete` with `stopReason: end_turn`
 7. `execution_complete`
 
-A tool call closes any open text block, then sends `tool_start` and `tool_complete`. Arguments travel on `tool_start.parameters`. There is no `origin` field. Quick replies use the built-in `suggest_replies` tool.
+A server tool closes any open text block, then sends `tool_start` and `tool_complete`. Arguments travel on `tool_start.parameters`. There is no `origin` field. Quick replies use the built-in `suggest_replies` tool.
 
-Deltas are the text. The server does not send the full answer again at the end.
+A tool that requires approval sends `agent_approval_start` and then `step_await` with `awaitReason: approval_required`. The stream stops there. The widget posts the decision to `{dispatch url}/v1/agents/{agentId}/approve` with `executionId`, `approvalId`, `decision` (`approved` or `denied`), and optional `remember`. The response is another SSE stream.
+
+A page tool (`clientTools` on the dispatch body, or a name starting with `webmcp:`) sends `step_await` with `awaitReason: local_tool_required`. The widget posts `{dispatch url}/resume` with `executionId` and `toolOutputs` keyed by `toolCallId`. That request does not include the transcript, so the server keeps the execution until the turn finishes.
+
+Deltas are the text. The server does not send the full answer again at the end. The default responder streams the echo word by word, then offers two suggestions.
 
 ## Other chats
 
@@ -87,6 +91,6 @@ A recipe does not render a transcript. The long-running TinyFish rule still hold
 
 Search and fetch do not spend credits. Agent runs do.
 
-## Replace the echo agent
+## Replace the echo responder
 
-The default agent repeats the last user message so the widget works before an AI package is installed. Bind your own `Determly\Chat\Agent` in a service provider when Laravel AI or Prism is added.
+`Determly\Chat\Run\EchoResponder` is bound by default so the widget streams before a model is installed. Bind your own `Determly\Chat\Run\Responder`. Return `Step::text()`, `Step::tool()`, and `Step::suggestions()`. The runner executes server tools, pauses for approval, and pauses for client tools. Do not call the model again yourself after a tool. The runner does that.

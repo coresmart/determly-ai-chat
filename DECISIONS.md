@@ -26,4 +26,4 @@ There is no Livewire package, React package, or Vue package. Those would wrap th
 - Livewire update requests and Inertia JSON visits are left alone.
 - The dispatch route is same-origin and CSRF-exempt so the widget can post. The session cookie still applies.
 
-Until an AI library is bound, dispatch uses `EchoAgent`, which repeats the latest user message. An app replaces the `Determly\Chat\Agent` binding. Tools from any recipe register on `ToolRegistry`. A duplicate tool name is refused.
+Until an AI library is bound, dispatch uses `EchoResponder`, which streams the latest user message and two suggestions. An app replaces the `Determly\Chat\Run\Responder` binding. The runner executes registered tools, pauses on `step_await` for approval or a client tool, and continues from `POST {dispatch}/resume` or `{dispatch}/v1/agents/{agent}/approve`. The execution is stored because those requests do not include the transcript. Tools from any recipe register on `ToolRegistry`. A duplicate tool name is refused.

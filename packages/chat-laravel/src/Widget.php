@@ -26,6 +26,12 @@ final class Widget
                     'title' => $title,
                     'subtitle' => $subtitle,
                 ],
+                'suggestions' => [
+                    'starters' => [
+                        'items' => ['What can you do?', 'What tools are available?'],
+                    ],
+                ],
+                'persistState' => true,
             ],
         ], JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_THROW_ON_ERROR);
 

@@ -23,6 +23,11 @@ final class ToolRegistry
         $this->tools[$name] = ['tool' => $tool, 'owner' => $owner];
     }
 
+    public function has(string $name): bool
+    {
+        return isset($this->tools[$name]);
+    }
+
     public function get(string $name): Tool
     {
         if (! isset($this->tools[$name])) {

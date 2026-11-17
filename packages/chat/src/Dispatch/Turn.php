@@ -12,11 +12,13 @@ final class Turn
      * @param  list<array{role: string, content: string}>  $messages
      * @param  array<string, mixed>  $context
      * @param  array<string, mixed>  $metadata
+     * @param  list<string>  $clientTools
      */
     public function __construct(
         public readonly array $messages,
         public readonly array $context = [],
         public readonly array $metadata = [],
+        public readonly array $clientTools = [],
     ) {}
 
     /**
@@ -33,6 +35,7 @@ final class Turn
             Messages::flatten(array_is_list($messages) ? $messages : throw new InvalidChat('messages must be a list.')),
             self::record($body['context'] ?? [], 'context'),
             self::record($body['metadata'] ?? [], 'metadata'),
+            self::clientTools($body['clientTools'] ?? []),
         );
     }
 
@@ -46,5 +49,25 @@ final class Turn
         }
 
         return $value;
+    }
+
+    /**
+     * @return list<string>
+     */
+    private static function clientTools(mixed $value): array
+    {
+        if (! is_array($value) || ! array_is_list($value)) {
+            throw new InvalidChat('clientTools must be a list.');
+        }
+        $names = [];
+        foreach ($value as $tool) {
+            $name = is_string($tool) ? $tool : (is_array($tool) ? ($tool['name'] ?? null) : null);
+            if (! is_string($name) || trim($name) === '') {
+                throw new InvalidChat('Each client tool needs a name.');
+            }
+            $names[] = $name;
+        }
+
+        return $names;
     }
 }
