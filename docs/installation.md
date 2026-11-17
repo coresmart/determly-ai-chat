@@ -1,5 +1,7 @@
 # Installation and integration
 
+Persona's advanced gallery, example by example: [advanced-examples.md](advanced-examples.md).
+
 Install `determly/chat-laravel` once. The same Persona 4.39.0 widget then runs on Blade, Livewire 3, Livewire 4, Filament 4, Filament 5, Inertia React, and Inertia Vue. The model library is a separate choice: Laravel AI, Prism, or the built-in echo responder.
 
 PHP 8.3 or newer. Laravel 12 or 13. The widget script is loaded from `https://cdn.jsdelivr.net`. A content security policy has to allow that host.

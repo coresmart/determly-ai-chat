@@ -2,7 +2,7 @@
 
 One Persona widget. One SSE dispatch endpoint. Every Laravel stack uses the same pair of packages.
 
-Install: [installation.md](installation.md). How the page talks to the widget: [integration.md](integration.md). Server frames and widget handle events: [events.md](events.md). Components, artifacts, questions, and layout: [components.md](components.md). A chat wired to both Prism and Laravel AI: [examples/support-chat](../examples/support-chat).
+Install: [installation.md](installation.md). Advanced examples: [advanced-examples.md](advanced-examples.md). How the page talks to the widget: [integration.md](integration.md). Server frames and widget handle events: [events.md](events.md). Components, artifacts, questions, and layout: [components.md](components.md). A chat wired to both Prism and Laravel AI: [examples/support-chat](../examples/support-chat).
 
 | Package | What it is |
 |---|---|
