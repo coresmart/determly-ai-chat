@@ -9,6 +9,8 @@ Determly monorepo for [Persona](https://www.persona-chat.dev) chat. Each install
 
 `determly/chat-laravel` depends on `determly/chat`. Blade, Livewire, Inertia React, Inertia Vue, and Filament all load `@runtypelabs/persona` 4.39.0. The stack detector reports which app is installed. It does not swap the widget.
 
+Install and wire Laravel AI, Prism, Blade, Livewire, Filament, and Inertia: [docs/installation.md](docs/installation.md).
+
 Details: [docs/chat.md](docs/chat.md). Page integration: [docs/integration.md](docs/integration.md). Events: [docs/events.md](docs/events.md). Components and features: [docs/components.md](docs/components.md). Prism and Laravel AI example: [examples/support-chat](examples/support-chat). Decisions: [DECISIONS.md](DECISIONS.md).
 
 ## Development
@@ -36,7 +38,7 @@ composer require determly/chat-laravel:@dev
 
 `determly/chat` is pulled in by `determly/chat-laravel`. A non-Laravel caller requires `determly/chat` alone.
 
-Install `laravel/ai` or `prism-php/prism` in the app when the chat should call a model. With one library installed, it is selected automatically. With both installed, set `DETERMINLY_CHAT_AI` to `laravel-ai` or `prism`. Prism also needs `DETERMINLY_CHAT_PROVIDER` and `DETERMINLY_CHAT_MODEL`. The adapters were checked against Laravel AI 1.4.0 and Prism 0.103.0. See [docs/chat.md](docs/chat.md).
+Install `laravel/ai` or `prism-php/prism` in the app when the chat should call a model. With one library installed, it is selected automatically. With both installed, set `DETERMINLY_CHAT_AI` to `laravel-ai` or `prism`. Prism also needs `DETERMINLY_CHAT_PROVIDER` and `DETERMINLY_CHAT_MODEL`. The adapters were checked against Laravel AI 1.4.0 and Prism 0.103.0. Step by step for each library and each front end: [docs/installation.md](docs/installation.md).
 
 ## Add a package
 
