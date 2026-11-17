@@ -91,6 +91,21 @@ A recipe does not render a transcript. The long-running TinyFish rule still hold
 
 Search and fetch do not spend credits. Agent runs do.
 
-## Replace the echo responder
+## Model
 
-`Determly\Chat\Run\EchoResponder` is bound by default so the widget streams before a model is installed. Bind your own `Determly\Chat\Run\Responder`. Return `Step::text()`, `Step::tool()`, and `Step::suggestions()`. The runner executes server tools, pauses for approval, and pauses for client tools. Do not call the model again yourself after a tool. The runner does that.
+`DETERMINLY_CHAT_AI` chooses who answers.
+
+| Value | When it is used |
+|---|---|
+| `auto` | Echo when neither library is installed. Laravel AI when only `laravel/ai` is installed. Prism when only `prism-php/prism` is installed. If both are installed, the first message reports that this value must be set. |
+| `echo` | The echo responder, whether or not a library is installed. |
+| `laravel-ai` | Laravel AI. `DETERMINLY_CHAT_PROVIDER` and `DETERMINLY_CHAT_MODEL` are optional and fall back to the Laravel AI defaults. |
+| `prism` | Prism. Set both `DETERMINLY_CHAT_PROVIDER` and `DETERMINLY_CHAT_MODEL`. |
+
+The adapters were written against `laravel/ai` 1.4.0 and `prism-php/prism` 0.103.0. `determly/chat-laravel` does not require either library. Install the one the app should use. The workspace installs both so the adapters can be tested.
+
+`DETERMINLY_CHAT_INSTRUCTIONS` replaces the default system text. Tool results go back to the model as untrusted data, not instructions. Search and fetch do not spend credits. A tool that starts a web task returns a run id. It does not call `agent->run()`.
+
+Laravel AI and Prism propose text, reasoning, and tool calls. The runner executes server tools, pauses for approval, and pauses for a page tool. Each library takes one model step per call, so it does not execute the tool itself. Prism's tool callback returns an empty string for the same reason. After a tool, the runner calls the responder again with the tool result in the transcript. `php artisan determly:chat` prints the choice.
+
+You can still bind your own `Determly\Chat\Run\Responder`. Return `Step::text()`, `Step::reasoning()`, `Step::tool()`, and `Step::suggestions()`. Do not call the model again yourself after a tool. The runner does that.

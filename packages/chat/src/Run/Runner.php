@@ -124,7 +124,28 @@ final class Runner
     private function consume(Execution $execution, Emitter $emit, iterable $steps): string
     {
         $endedOnTool = false;
+        $reasoningId = null;
+        $closeReasoning = function () use ($emit, &$reasoningId): void {
+            if ($reasoningId === null) {
+                return;
+            }
+            $emit->reasoningComplete($reasoningId);
+            $reasoningId = null;
+        };
         foreach ($steps as $step) {
+            if ($step->kind === 'reasoning') {
+                if ($reasoningId === null) {
+                    $reasoningId = 'reason_'.bin2hex(random_bytes(8));
+                    $emit->reasoningStart($reasoningId);
+                }
+                if ($step->text !== '') {
+                    $emit->reasoningDelta($reasoningId, $step->text);
+                }
+                $endedOnTool = false;
+
+                continue;
+            }
+            $closeReasoning();
             if ($step->kind === 'text') {
                 $emit->textDelta($step->text);
                 $endedOnTool = false;
@@ -157,6 +178,7 @@ final class Runner
             $this->store->put($execution);
             $endedOnTool = true;
         }
+        $closeReasoning();
 
         return $endedOnTool ? 'tool' : 'done';
     }

@@ -18,6 +18,10 @@
             "Determly\\Chat\\Laravel\\": "src/"
         }
     },
+    "suggest": {
+        "laravel/ai": "Stream the Persona chat through Laravel AI 1.4. When Prism is also installed, set DETERMINLY_CHAT_AI=laravel-ai.",
+        "prism-php/prism": "Stream the Persona chat through Prism 0.103. When Laravel AI is also installed, set DETERMINLY_CHAT_AI=prism. Prism also needs DETERMINLY_CHAT_PROVIDER and DETERMINLY_CHAT_MODEL."
+    },
     "extra": {
         "laravel": {
             "providers": [

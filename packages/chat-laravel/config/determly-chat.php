@@ -10,4 +10,8 @@ return [
     'agent_name' => env('DETERMINLY_CHAT_NAME', 'Assistant'),
     'title' => env('DETERMINLY_CHAT_TITLE', 'Assistant'),
     'subtitle' => env('DETERMINLY_CHAT_SUBTITLE', 'Ask a question'),
+    'ai' => env('DETERMINLY_CHAT_AI', 'auto'),
+    'provider' => env('DETERMINLY_CHAT_PROVIDER'),
+    'model' => env('DETERMINLY_CHAT_MODEL'),
+    'instructions' => env('DETERMINLY_CHAT_INSTRUCTIONS', \Determly\Chat\Laravel\Ai\Assistant::INSTRUCTIONS),
 ];

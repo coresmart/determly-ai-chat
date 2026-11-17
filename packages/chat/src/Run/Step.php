@@ -23,6 +23,11 @@ final class Step
         return new self('text', $text);
     }
 
+    public static function reasoning(string $text): self
+    {
+        return new self('reasoning', $text);
+    }
+
     /**
      * @param  array<string, mixed>  $input
      */

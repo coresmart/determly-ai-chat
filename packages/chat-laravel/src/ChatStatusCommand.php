@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Determly\Chat\Laravel;
 
+use Determly\Chat\InvalidChat;
+use Determly\Chat\Laravel\Ai\AiChoice;
 use Determly\Chat\ToolRegistry;
 use Illuminate\Console\Command;
 
@@ -25,6 +27,9 @@ final class ChatStatusCommand extends Command
         $this->line('Stack: '.$stack->value);
         $this->line($stack->summary());
         $this->line('Dispatch: '.url((string) config('determly-chat.path')));
+        if ($this->reportAi() !== self::SUCCESS) {
+            return self::FAILURE;
+        }
 
         $owners = $tools->owners();
         if ($owners === []) {
@@ -33,6 +38,38 @@ final class ChatStatusCommand extends Command
             foreach ($owners as $name => $owner) {
                 $this->line('Tool: '.$name.' ('.$owner.')');
             }
+        }
+
+        return self::SUCCESS;
+    }
+
+    private function reportAi(): int
+    {
+        try {
+            $choice = AiChoice::resolve(
+                (string) config('determly-chat.ai', AiChoice::AUTO),
+                class_exists(\Laravel\Ai\Ai::class),
+                class_exists(\Prism\Prism\Prism::class),
+            );
+        } catch (InvalidChat $error) {
+            $this->error($error->getMessage());
+
+            return self::FAILURE;
+        }
+
+        $this->line('AI: '.$choice);
+        if ($choice === AiChoice::ECHO) {
+            return self::SUCCESS;
+        }
+
+        $provider = AiChoice::present(config('determly-chat.provider'));
+        $model = AiChoice::present(config('determly-chat.model'));
+        $this->line('Provider: '.($provider ?? 'library default'));
+        $this->line('Model: '.($model ?? 'library default'));
+        if ($choice === AiChoice::PRISM && ($provider === null || $model === null)) {
+            $this->error('Prism needs DETERMINLY_CHAT_PROVIDER and DETERMINLY_CHAT_MODEL.');
+
+            return self::FAILURE;
         }
 
         return self::SUCCESS;

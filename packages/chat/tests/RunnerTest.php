@@ -163,6 +163,25 @@ final class RunnerTest extends TestCase
         $this->assertSame(2, $responder->calls);
     }
 
+    public function test_reasoning_closes_before_the_answer(): void
+    {
+        $frames = $this->play(function (Runner $runner, Emitter $emit): void {
+            $runner->dispatch(Turn::fromArray([
+                'messages' => [['role' => 'user', 'content' => 'think']],
+            ]), $emit);
+        }, new ScriptResponder([
+            [Step::reasoning('Checking'), Step::text('Ready.')],
+        ]));
+
+        $names = $this->names($frames);
+        $this->assertLessThan(
+            array_search('text_delta', $names, true),
+            array_search('reasoning_complete', $names, true),
+        );
+        $this->assertSame('Checking', $this->event($frames, 'reasoning_delta')->data['delta']);
+        $this->assertSame('Ready.', $this->event($frames, 'text_delta')->data['delta']);
+    }
+
     public function test_resume_without_a_paused_execution_is_an_error(): void
     {
         $frames = $this->play(function (Runner $runner, Emitter $emit): void {

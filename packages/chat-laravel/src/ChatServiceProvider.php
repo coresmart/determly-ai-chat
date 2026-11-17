@@ -6,6 +6,12 @@ namespace Determly\Chat\Laravel;
 
 use Determly\Chat\Agent;
 use Determly\Chat\EchoAgent;
+use Determly\Chat\InvalidChat;
+use Determly\Chat\Laravel\Ai\AiChoice;
+use Determly\Chat\Laravel\Ai\Assistant;
+use Determly\Chat\Laravel\Ai\ConfigurationResponder;
+use Determly\Chat\Laravel\Ai\LaravelAiResponder;
+use Determly\Chat\Laravel\Ai\PrismResponder;
 use Determly\Chat\Run\EchoResponder;
 use Determly\Chat\Run\ExecutionStore;
 use Determly\Chat\Run\Responder;
@@ -26,7 +32,27 @@ final class ChatServiceProvider extends ServiceProvider
             $this->app->make('cache')->store(),
         ));
         $this->app->bind(Agent::class, EchoAgent::class);
-        $this->app->bind(Responder::class, EchoResponder::class);
+        $this->app->bind(Responder::class, function ($app): Responder {
+            try {
+                $choice = AiChoice::resolve(
+                    (string) config('determly-chat.ai', AiChoice::AUTO),
+                    class_exists(\Laravel\Ai\Ai::class),
+                    class_exists(\Prism\Prism\Prism::class),
+                );
+            } catch (InvalidChat $error) {
+                return new ConfigurationResponder($error->getMessage());
+            }
+
+            $instructions = (string) config('determly-chat.instructions', Assistant::INSTRUCTIONS);
+            $provider = AiChoice::present(config('determly-chat.provider'));
+            $model = AiChoice::present(config('determly-chat.model'));
+
+            return match ($choice) {
+                AiChoice::LARAVEL => new LaravelAiResponder($app->make(ToolRegistry::class), $instructions, $provider, $model),
+                AiChoice::PRISM => new PrismResponder($app->make(ToolRegistry::class), $instructions, $provider, $model),
+                default => new EchoResponder,
+            };
+        });
         $this->app->singleton(Runner::class);
     }
 
