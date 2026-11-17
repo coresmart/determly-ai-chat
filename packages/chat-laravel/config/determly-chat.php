@@ -32,7 +32,9 @@ return [
         'dark_theme' => [],
     ],
     'ai' => env('DETERMLY_CHAT_AI', 'auto'),
-    'provider' => env('DETERMLY_CHAT_PROVIDER'),
-    'model' => env('DETERMLY_CHAT_MODEL'),
+    // Provider and model names only. The API key is not a parameter here.
+    // OpenRouter reads OPENROUTER_API_KEY in Laravel AI config/ai.php and Prism config/prism.php.
+    'provider' => env('DETERMLY_CHAT_PROVIDER', 'openrouter'),
+    'model' => env('DETERMLY_CHAT_MODEL', 'openai/gpt-4o-mini'),
     'instructions' => env('DETERMLY_CHAT_INSTRUCTIONS', \Determly\Chat\Laravel\Ai\Assistant::INSTRUCTIONS),
 ];
