@@ -15,12 +15,13 @@ Details: [docs/chat.md](docs/chat.md). Page integration: [docs/integration.md](d
 
 ## Gallery
 
-`examples/gallery` is a small Laravel app on the monorepo `vendor/`. It serves a Persona widget for each advanced example and answers in echo mode, so it does not need an API key. `DETERMLY_CHAT_AI=echo` and `DETERMLY_CHAT_INJECT=false` are set in `examples/gallery/.env`. Approvals and resumes use the file cache.
+`examples/gallery` is a small Laravel app on the monorepo `vendor/`. The scripted pages answer in echo mode and do not need an API key. `/examples/laravel-ai` and `/examples/prism` send the sentence to Laravel AI or Prism. Those two need `DETERMLY_CHAT_PROVIDER`, `DETERMLY_CHAT_MODEL`, and the provider key. Copy `examples/gallery/.env.example` to `examples/gallery/.env`. The example sets `DETERMLY_CHAT_AI=echo` and `DETERMLY_CHAT_INJECT=false`. `.env` is not committed. Approvals and resumes use the file cache.
 
 From this repository:
 
 ```bash
 composer install
+cp -n examples/gallery/.env.example examples/gallery/.env
 php -S 127.0.0.1:8080 -t examples/gallery/public examples/gallery/public/index.php
 ```
 

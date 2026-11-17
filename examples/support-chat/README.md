@@ -2,7 +2,7 @@
 
 One tool, two model libraries. The app registers `lookup_order` once. `DETERMLY_CHAT_AI` chooses Laravel AI or Prism. The page script refreshes the orders table and exposes `refresh_orders` to the widget.
 
-This is not a second Laravel application. Copy the tool and the script into the app. The workspace test `SupportChatExampleTest` runs the tool through both responders with fakes, so it does not call a provider.
+This is not a second Laravel application. Copy the tool and the script into the app. The workspace test `SupportChatExampleTest` runs the tool through both responders with fakes, so it does not call a provider. The gallery pages that do call a provider are `/examples/laravel-ai` and `/examples/prism`.
 
 ## Install
 

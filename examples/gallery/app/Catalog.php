@@ -57,8 +57,20 @@ final class Catalog
             'agent' => [
                 'title' => 'Agent Loop',
                 'subtitle' => 'Reason, use a tool, answer',
-                'summary' => 'The turn reasons, calls lookup_order, then answers from that result.',
+                'summary' => 'The turn reasons, calls lookup_order, then answers from that result. This page is scripted.',
                 'starters' => ['Where is order 1001?', 'Where is order 1234?'],
+            ],
+            'laravel-ai' => [
+                'title' => 'Laravel AI',
+                'subtitle' => 'The model reads the sentence',
+                'summary' => 'The sentence goes to Laravel AI. The model chooses lookup_order or query_orders, and it writes the answer.',
+                'starters' => ['Did Jordan Blake\'s order ship?', 'Who still has an open order?', 'What did Sam Okonkwo pay?'],
+            ],
+            'prism' => [
+                'title' => 'Prism',
+                'subtitle' => 'The model reads the sentence',
+                'summary' => 'The sentence goes to Prism. The model chooses lookup_order or query_orders, and it writes the answer.',
+                'starters' => ['Did Jordan Blake\'s order ship?', 'Who still has an open order?', 'What did Sam Okonkwo pay?'],
             ],
             'approval' => [
                 'title' => 'Tool Approval',

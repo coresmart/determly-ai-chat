@@ -1,16 +1,17 @@
 # Advanced examples in Laravel
 
-[Persona's advanced gallery](https://www.persona-chat.dev/advanced.html) is a set of demos on top of `@runtypelabs/persona` 4.39.0. The runnable copy in this repo is the Laravel app at [examples/gallery](../examples/gallery). Open it in the browser. Each page mounts the Persona widget and dispatches to its own route. The scripted responder does not call a model.
+[Persona's advanced gallery](https://www.persona-chat.dev/advanced.html) is a set of demos on top of `@runtypelabs/persona` 4.39.0. The runnable copy in this repo is the Laravel app at [examples/gallery](../examples/gallery). Open it in the browser. Each page mounts the Persona widget and dispatches to its own route. The scripted responder does not call a model. `/examples/laravel-ai` and `/examples/prism` do.
 
 From the repository root, after `composer install`:
 
 ```bash
+cp -n examples/gallery/.env.example examples/gallery/.env
 php -S 127.0.0.1:8080 -t examples/gallery/public examples/gallery/public/index.php
 ```
 
 The last argument is the router. Without it, the built-in server only serves files that exist under `public/` and `/examples/...` 404s. Then open [http://127.0.0.1:8080/](http://127.0.0.1:8080/).
 
-`examples/gallery/.env` sets `DETERMLY_CHAT_AI=echo`, `DETERMLY_CHAT_INJECT=false`, `CACHE_STORE=file`, `SESSION_DRIVER=file`, and a local `APP_KEY`. The gallery also forces echo and the file cache in its service provider. Both `laravel/ai` and `prism-php/prism` are installed in this workspace, so `auto` would error. Echo mode needs no API key. The file cache is required because PHP's built-in server is a new process per request; the array cache would drop an approval or a resume. `storage/framework/cache` must be writable. The app has no `vendor/` of its own. `public/index.php` points `COMPOSER_VENDOR_DIR` at the monorepo `vendor/` and loads that autoload file.
+Copy `examples/gallery/.env.example` to `examples/gallery/.env`. The example sets `DETERMLY_CHAT_AI=echo`, `DETERMLY_CHAT_PROVIDER`, `DETERMLY_CHAT_MODEL`, `DETERMLY_CHAT_INJECT=false`, `CACHE_STORE=file`, `SESSION_DRIVER=file`, and a local `APP_KEY`. `.env` is not committed. Put the provider key in `.env`. The gallery forces echo for the scripted pages. Both `laravel/ai` and `prism-php/prism` are installed in this workspace, so `auto` would error. The two model pages ignore that echo setting and call the library named by the route. They need the provider key in the environment. Echo mode needs no API key. The file cache is required because PHP's built-in server is a new process per request; the array cache would drop an approval or a resume. `storage/framework/cache` must be writable. The app has no `vendor/` of its own. `public/index.php` points `COMPOSER_VENDOR_DIR` at the monorepo `vendor/` and loads that autoload file.
 
 How to open each page is in [examples/gallery/README.md](../examples/gallery/README.md). Install and the per-stack refresh calls are in [installation.md](installation.md). Component props are in [components.md](components.md). Frames and handle events are in [events.md](events.md).
 
@@ -26,6 +27,8 @@ Voice input and output, bring-your-own voice, server TTS, text-reveal animations
 | [Bring-Your-Own Voice](https://www.persona-chat.dev/custom-voice-provider-demo.html) | Generative UX | Not in this gallery. Needs a speech service. |
 | [Server TTS](https://www.persona-chat.dev/server-tts-demo.html) | Generative UX | Not in this gallery. Needs a speech service. |
 | [Agent Loop](https://www.persona-chat.dev/agent-demo.html) | Generative UX, hidden in Persona's gallery | [/examples/agent](../examples/gallery/resources/views/examples/agent.blade.php) |
+| Laravel AI | A model, not a Persona demo | [/examples/laravel-ai](../examples/gallery/resources/views/examples/model.blade.php) |
+| Prism | A model, not a Persona demo | [/examples/prism](../examples/gallery/resources/views/examples/model.blade.php) |
 | [Tool and Reasoning Loaders](https://www.persona-chat.dev/tool-loading-demo.html) | Patterns | [/examples/loaders](../examples/gallery/resources/views/examples/loaders.blade.php) |
 | [Text Reveal Effects](https://www.persona-chat.dev/stream-animations-demo.html) | Patterns | Not in this gallery. Text arrives as `text_delta` with no reveal animation. |
 | [Streaming Markdown Tables](https://www.persona-chat.dev/streaming-table-demo.html) | Patterns | [/examples/tables](../examples/gallery/resources/views/examples/tables.blade.php) |
@@ -81,7 +84,15 @@ Those three demos attach a speech engine to the composer. They are not in this g
 
 [/examples/agent](../examples/gallery/resources/views/examples/agent.blade.php) is the multi-step turn: reasoning, the server tool `lookup_order`, then the answer. The order id comes from the message. A number that is not in the table is reported as missing. Persona hides this demo in its own gallery. It is the path `POST /examples/agent/dispatch` runs here, and the path `POST /determly/chat/dispatch` runs in an app.
 
-The library proposes one step. The runner executes a server tool or pauses. It then calls the library again, up to eight rounds. In the gallery the library is the scripted responder. Reasoning is `reasoning_start`, `reasoning_delta`, and `reasoning_complete`. Tools are `tool_start` and `tool_complete`.
+The library proposes one step. The runner executes a server tool or pauses. It then calls the library again, up to eight rounds. On this page the library is the scripted responder. Reasoning is `reasoning_start`, `reasoning_delta`, and `reasoning_complete`. Tools are `tool_start` and `tool_complete`.
+
+### Laravel AI and Prism
+
+[/examples/laravel-ai](../examples/gallery/resources/views/examples/model.blade.php) and [/examples/prism](../examples/gallery/resources/views/examples/model.blade.php) send the sentence to a model. `ModelChat` builds `LaravelAiResponder` or `PrismResponder` with `lookup_order` and `query_orders`. The model sees the words. It chooses the tool. The runner calls `handle()`, then calls the model again with the tool result. The answer text is the model's, not a PHP template.
+
+The starters ask about a customer ("Did Jordan Blake's order ship?"). The scripted agent page cannot answer that. It only keeps a number from the message.
+
+Set `DETERMLY_CHAT_PROVIDER`, `DETERMLY_CHAT_MODEL`, and the provider key. For `openai` / `gpt-4o-mini`, the key is `OPENAI_API_KEY`. A missing key is an `execution_error` on the stream. The page does not fall back to the script.
 
 ## Patterns
 
