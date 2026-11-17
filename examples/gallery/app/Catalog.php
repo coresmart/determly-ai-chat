@@ -58,7 +58,7 @@ final class Catalog
                 'title' => 'Agent Loop',
                 'subtitle' => 'Reason, use a tool, answer',
                 'summary' => 'The turn reasons, calls lookup_order, then answers from that result.',
-                'starters' => ['Where is order 1001?'],
+                'starters' => ['Where is order 1001?', 'Where is order 1234?'],
             ],
             'approval' => [
                 'title' => 'Tool Approval',

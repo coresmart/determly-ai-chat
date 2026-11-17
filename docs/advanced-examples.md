@@ -79,7 +79,7 @@ Those three demos attach a speech engine to the composer. They are not in this g
 
 ### Agent Loop
 
-[/examples/agent](../examples/gallery/resources/views/examples/agent.blade.php) is the multi-step turn: reasoning, the server tool `lookup_order`, then the answer. Persona hides this demo in its own gallery. It is the path `POST /examples/agent/dispatch` runs here, and the path `POST /determly/chat/dispatch` runs in an app.
+[/examples/agent](../examples/gallery/resources/views/examples/agent.blade.php) is the multi-step turn: reasoning, the server tool `lookup_order`, then the answer. The order id comes from the message. A number that is not in the table is reported as missing. Persona hides this demo in its own gallery. It is the path `POST /examples/agent/dispatch` runs here, and the path `POST /determly/chat/dispatch` runs in an app.
 
 The library proposes one step. The runner executes a server tool or pauses. It then calls the library again, up to eight rounds. In the gallery the library is the scripted responder. Reasoning is `reasoning_start`, `reasoning_delta`, and `reasoning_complete`. Tools are `tool_start` and `tool_complete`.
 

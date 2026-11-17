@@ -165,14 +165,23 @@ final class GalleryResponder implements Responder
 
     private function agent(Turn $turn): iterable
     {
-        if ($this->resultSinceUser($turn) === null) {
-            yield Step::reasoning('The visitor wants a status. I will look up order 1001. ');
-            yield Step::tool('lookup_order', ['order_id' => '1001']);
+        $id = $this->orderId($this->latestUser($turn));
+        $result = $this->resultSinceUser($turn);
+        if ($result === null) {
+            yield Step::reasoning('The visitor wants a status. I will look up order '.$id.'. ');
+            yield Step::tool('lookup_order', ['order_id' => $id]);
 
             return;
         }
 
-        yield Step::text('Order 1001 for Avery Chen is shipped. The total is $86.00.');
+        $row = $this->orderFromResult($result);
+        if ($row === null) {
+            yield Step::text('Order '.$id.' is not in the table.');
+
+            return;
+        }
+
+        yield Step::text('Order '.$row['id'].' for '.$row['customer'].' is '.$row['status'].'. The total is '.$row['total'].'.');
     }
 
     private function approval(Turn $turn): iterable
@@ -280,6 +289,42 @@ final class GalleryResponder implements Responder
 
         usleep(400_000);
         yield Step::text('The open order is 1002 for Jordan Blake, total $42.50.');
+    }
+
+    private function orderId(string $user): string
+    {
+        if (preg_match('/\b(\d{3,6})\b/', $user, $match) === 1) {
+            return $match[1];
+        }
+
+        return '1001';
+    }
+
+    /**
+     * @return array{id: string, customer: string, status: string, total: string}|null
+     */
+    private function orderFromResult(string $content): ?array
+    {
+        $json = strstr($content, '{');
+        if ($json === false) {
+            return null;
+        }
+        $decoded = json_decode($json, true);
+        if (! is_array($decoded) || ($decoded['found'] ?? false) !== true) {
+            return null;
+        }
+        foreach (['id', 'customer', 'status', 'total'] as $key) {
+            if (! is_string($decoded[$key] ?? null) || $decoded[$key] === '') {
+                return null;
+            }
+        }
+
+        return [
+            'id' => $decoded['id'],
+            'customer' => $decoded['customer'],
+            'status' => $decoded['status'],
+            'total' => $decoded['total'],
+        ];
     }
 
     private function wantsFilter(string $user): bool
