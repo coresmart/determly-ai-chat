@@ -8,6 +8,7 @@ use Determly\Chat\Dispatch\Turn;
 use Determly\Chat\Gallery\ExampleSlug;
 use Determly\Chat\Gallery\GalleryResponder;
 use Determly\Chat\Gallery\GalleryWidget;
+use Determly\Chat\Gallery\Tools\LookupOrder;
 use Determly\Chat\Gallery\Tools\QueryOrders;
 use Determly\Chat\Gallery\Tools\RefundOrder;
 use Determly\Chat\Run\MemoryExecutionStore;
@@ -96,6 +97,27 @@ final class GalleryResponderTest extends TestCase
 
         $this->assertContains('suggest_replies', $this->toolNames($continued));
         $this->assertStringContainsString('Thanks', $this->text($continued));
+    }
+
+    public function test_agent_answers_from_the_order_the_visitor_named(): void
+    {
+        $tools = new ToolRegistry;
+        $tools->register(new LookupOrder, 'gallery');
+
+        $known = $this->play('agent', [
+            'messages' => [['role' => 'user', 'content' => 'Where is order 1002?']],
+        ], $tools);
+        $this->assertSame('1002', $this->event($known, 'tool_start')->data['parameters']['order_id']);
+        $this->assertStringContainsString('order 1002', $this->event($known, 'reasoning_delta')->data['delta']);
+        $this->assertSame('Order 1002 for Jordan Blake is open. The total is $42.50.', trim($this->text($known)));
+
+        $missing = $this->play('agent', [
+            'messages' => [['role' => 'user', 'content' => 'Where is order 1234']],
+        ], $tools);
+        $this->assertSame('1234', $this->event($missing, 'tool_start')->data['parameters']['order_id']);
+        $this->assertFalse($this->event($missing, 'tool_complete')->data['result']['found']);
+        $this->assertSame('Order 1234 is not in the table.', trim($this->text($missing)));
+        $this->assertStringNotContainsString('1001', $this->text($missing));
     }
 
     public function test_component_reply_is_only_json(): void
