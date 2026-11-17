@@ -34,7 +34,7 @@ final class ChatStatusCommand extends Command
         $target = (string) config('determly-chat.target', 'body');
         $this->line('Mount: '.$mount.' target '.$target);
         if ($mount === 'docked' && in_array($target, ['body', 'html'], true)) {
-            $this->error('A docked chat cannot target body or html. Set DETERMINLY_CHAT_TARGET to a page region.');
+            $this->error('A docked chat cannot target body or html. Set DETERMLY_CHAT_TARGET to a page region.');
 
             return self::FAILURE;
         }
@@ -81,7 +81,7 @@ final class ChatStatusCommand extends Command
         $this->line('Provider: '.($provider ?? 'library default'));
         $this->line('Model: '.($model ?? 'library default'));
         if ($choice === AiChoice::PRISM && ($provider === null || $model === null)) {
-            $this->error('Prism needs DETERMINLY_CHAT_PROVIDER and DETERMINLY_CHAT_MODEL.');
+            $this->error('Prism needs DETERMLY_CHAT_PROVIDER and DETERMLY_CHAT_MODEL.');
 
             return self::FAILURE;
         }

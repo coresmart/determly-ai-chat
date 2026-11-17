@@ -19,13 +19,13 @@ Widget: `@runtypelabs/persona` 4.39.0. Server events and browser events: [events
 
 The routes use the `web` middleware group and skip `ValidateCsrfToken`. The widget still sends `X-CSRF-TOKEN` from the `csrf-token` meta tag, plus `X-Requested-With` and `Accept: text/event-stream`.
 
-Set `DETERMINLY_CHAT_INJECT=false` and render `<x-determly-chat />` yourself when the layout should own the script tag. Injection and the component emit the same HTML.
+Set `DETERMLY_CHAT_INJECT=false` and render `<x-determly-chat />` yourself when the layout should own the script tag. Injection and the component emit the same HTML.
 
 `php artisan determly:chat` prints the widget version, the detected stack, the dispatch URL, the `window` key, whether WebMCP is on, the model library, and registered tools.
 
 ## Stacks
 
-Detection is by package name, not by version. `DETERMINLY_CHAT_STACK` overrides it. The value must be `filament`, `livewire`, `inertia-react`, `inertia-vue`, `inertia`, or `blade`.
+Detection is by package name, not by version. `DETERMLY_CHAT_STACK` overrides it. The value must be `filament`, `livewire`, `inertia-react`, `inertia-vue`, `inertia`, or `blade`.
 
 | Installed | Reported stack |
 |---|---|
@@ -46,7 +46,7 @@ An Inertia visit after the first page is JSON and is skipped. The first page is 
 
 ## The handle
 
-The injected config sets `windowKey` to `determlyChat`. Listen on `persona:chat-ready` or call `window.determlyChat`. Change the key with `DETERMINLY_CHAT_WINDOW_KEY`. An empty value omits `windowKey`, and the handle is only on the ready event.
+The injected config sets `windowKey` to `determlyChat`. Listen on `persona:chat-ready` or call `window.determlyChat`. Change the key with `DETERMLY_CHAT_WINDOW_KEY`. An empty value omits `windowKey`, and the handle is only on the ready event.
 
 ```js
 window.addEventListener('persona:chat-ready', function (event) {
@@ -73,7 +73,7 @@ Streaming, server tools, approval, and run ids stay on the server. The page only
 
 ## Page tools
 
-A page tool runs in the browser. Register it on `document.modelContext` before the visitor sends a message. `DETERMINLY_CHAT_WEBMCP` defaults to true, which sets `config.webmcp.enabled` so Persona snapshots `document.modelContext` on each send. Set `DETERMINLY_CHAT_WEBMCP=false` to leave that off.
+A page tool runs in the browser. Register it on `document.modelContext` before the visitor sends a message. `DETERMLY_CHAT_WEBMCP` defaults to true, which sets `config.webmcp.enabled` so Persona snapshots `document.modelContext` on each send. Set `DETERMLY_CHAT_WEBMCP=false` to leave that off.
 
 ```js
 document.modelContext.registerTool({
@@ -105,14 +105,14 @@ Do not block a tool on a web task. A tool that starts one returns a run id. Sear
 
 ## Laravel AI and Prism
 
-The responder is selected by what is installed and by `DETERMINLY_CHAT_AI`.
+The responder is selected by what is installed and by `DETERMLY_CHAT_AI`.
 
-| `DETERMINLY_CHAT_AI` | Result |
+| `DETERMLY_CHAT_AI` | Result |
 |---|---|
 | `auto` | Echo if neither library is installed. Laravel AI if only `laravel/ai` is installed. Prism if only `prism-php/prism` is installed. An error if both are installed. |
 | `echo` | The echo responder. |
 | `laravel-ai` | Laravel AI. Provider and model are optional. |
-| `prism` | Prism. `DETERMINLY_CHAT_PROVIDER` and `DETERMINLY_CHAT_MODEL` are required. |
+| `prism` | Prism. `DETERMLY_CHAT_PROVIDER` and `DETERMLY_CHAT_MODEL` are required. |
 
 The adapters were written against `laravel/ai` 1.4.0 and `prism-php/prism` 0.103.0. The published package does not require either library.
 

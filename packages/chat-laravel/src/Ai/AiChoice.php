@@ -8,7 +8,7 @@ use Determly\Chat\InvalidChat;
 
 /**
  * Picks the responder. Echo when neither SDK is installed.
- * One installed SDK is used. Both installed SDKs require DETERMINLY_CHAT_AI.
+ * One installed SDK is used. Both installed SDKs require DETERMLY_CHAT_AI.
  */
 final class AiChoice
 {
@@ -32,23 +32,23 @@ final class AiChoice
         }
         if ($configured === self::LARAVEL) {
             if (! $laravelInstalled) {
-                throw new InvalidChat('DETERMINLY_CHAT_AI is laravel-ai, but laravel/ai is not installed.');
+                throw new InvalidChat('DETERMLY_CHAT_AI is laravel-ai, but laravel/ai is not installed.');
             }
 
             return self::LARAVEL;
         }
         if ($configured === self::PRISM) {
             if (! $prismInstalled) {
-                throw new InvalidChat('DETERMINLY_CHAT_AI is prism, but prism-php/prism is not installed.');
+                throw new InvalidChat('DETERMLY_CHAT_AI is prism, but prism-php/prism is not installed.');
             }
 
             return self::PRISM;
         }
         if ($configured !== self::AUTO) {
-            throw new InvalidChat('DETERMINLY_CHAT_AI must be auto, echo, laravel-ai, or prism.');
+            throw new InvalidChat('DETERMLY_CHAT_AI must be auto, echo, laravel-ai, or prism.');
         }
         if ($laravelInstalled && $prismInstalled) {
-            throw new InvalidChat('Both laravel/ai and prism-php/prism are installed. Set DETERMINLY_CHAT_AI to laravel-ai or prism.');
+            throw new InvalidChat('Both laravel/ai and prism-php/prism are installed. Set DETERMLY_CHAT_AI to laravel-ai or prism.');
         }
         if ($laravelInstalled) {
             return self::LARAVEL;

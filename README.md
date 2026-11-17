@@ -38,7 +38,7 @@ composer require determly/chat-laravel:@dev
 
 `determly/chat` is pulled in by `determly/chat-laravel`. A non-Laravel caller requires `determly/chat` alone.
 
-Install `laravel/ai` or `prism-php/prism` in the app when the chat should call a model. With one library installed, it is selected automatically. With both installed, set `DETERMINLY_CHAT_AI` to `laravel-ai` or `prism`. Prism also needs `DETERMINLY_CHAT_PROVIDER` and `DETERMINLY_CHAT_MODEL`. The adapters were checked against Laravel AI 1.4.0 and Prism 0.103.0. Step by step for each library and each front end: [docs/installation.md](docs/installation.md).
+Install `laravel/ai` or `prism-php/prism` in the app when the chat should call a model. With one library installed, it is selected automatically. With both installed, set `DETERMLY_CHAT_AI` to `laravel-ai` or `prism`. Prism also needs `DETERMLY_CHAT_PROVIDER` and `DETERMLY_CHAT_MODEL`. The adapters were checked against Laravel AI 1.4.0 and Prism 0.103.0. Step by step for each library and each front end: [docs/installation.md](docs/installation.md).
 
 ## Add a package
 
