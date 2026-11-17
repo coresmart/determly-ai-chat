@@ -6,7 +6,7 @@ The app has no `vendor/` of its own. `public/index.php` loads the monorepo `vend
 
 The cache driver is `file`. PHP's built-in server starts a new process for every request, so an array cache would lose the paused execution and approval or resume would fail. `storage/framework/cache` is created on boot if it is missing. It must be writable. Session storage is a file too.
 
-`examples/gallery/.env` already has a local `APP_KEY`, `CACHE_STORE=file`, and `SESSION_DRIVER=file`. That key only encrypts this app's cookies. It is not an API key.
+Copy `examples/gallery/.env.example` to `examples/gallery/.env`. The example has a local `APP_KEY`, `CACHE_STORE=file`, and `SESSION_DRIVER=file`. That key only encrypts this app's cookies. It is not an API key. `.env` is not committed. Put the provider key there.
 
 ## Start
 
@@ -14,6 +14,7 @@ From the repository root:
 
 ```bash
 composer install
+cp -n examples/gallery/.env.example examples/gallery/.env
 php -S 127.0.0.1:8080 -t examples/gallery/public examples/gallery/public/index.php
 ```
 
