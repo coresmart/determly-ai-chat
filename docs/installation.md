@@ -68,12 +68,12 @@ The chat package does not install a model library. Echo answers until you instal
 composer require laravel/ai:^1.4
 ```
 
-Publish Laravel AI's own config the way that package documents, then set its key. `DETERMLY_CHAT_PROVIDER` defaults to `openrouter` and `DETERMLY_CHAT_MODEL` defaults to `openai/gpt-4o-mini`. Neither value is an API key.
+Publish Laravel AI's own config the way that package documents, then set its key. `DETERMLY_CHAT_PROVIDER` defaults to `openrouter` and `DETERMLY_CHAT_MODEL` defaults to `openai/gpt-4.1-mini`. Neither value is an API key.
 
 ```dotenv
 DETERMLY_CHAT_AI=laravel-ai
 DETERMLY_CHAT_PROVIDER=openrouter
-DETERMLY_CHAT_MODEL=openai/gpt-4o-mini
+DETERMLY_CHAT_MODEL=openai/gpt-4.1-mini
 OPENROUTER_API_KEY=
 ```
 
@@ -92,7 +92,7 @@ Prism has no default provider. Both values are required:
 ```dotenv
 DETERMLY_CHAT_AI=prism
 DETERMLY_CHAT_PROVIDER=openrouter
-DETERMLY_CHAT_MODEL=openai/gpt-4o-mini
+DETERMLY_CHAT_MODEL=openai/gpt-4.1-mini
 OPENROUTER_API_KEY=
 ```
 
@@ -111,7 +111,7 @@ or:
 ```dotenv
 DETERMLY_CHAT_AI=prism
 DETERMLY_CHAT_PROVIDER=openrouter
-DETERMLY_CHAT_MODEL=openai/gpt-4o-mini
+DETERMLY_CHAT_MODEL=openai/gpt-4.1-mini
 ```
 
 Change `DETERMLY_CHAT_AI` and restart the PHP process to switch the chat. The tools do not change.
@@ -400,7 +400,7 @@ Boolean env values accept `true`, `false`, `1`, `0`, `yes`, and `no`.
 | `DETERMLY_CHAT_INJECT` | `true` | Insert the widget before `</body>`. |
 | `DETERMLY_CHAT_AI` | `auto` | `auto`, `echo`, `laravel-ai`, or `prism`. |
 | `DETERMLY_CHAT_PROVIDER` | `openrouter` | Provider name passed to Laravel AI or Prism. Not an API key. |
-| `DETERMLY_CHAT_MODEL` | `openai/gpt-4o-mini` | Model id. OpenRouter requires the `vendor/model` form. |
+| `DETERMLY_CHAT_MODEL` | `openai/gpt-4.1-mini` | Model id. OpenRouter requires the `vendor/model` form. |
 | `DETERMLY_CHAT_INSTRUCTIONS` | package default | System text. |
 | `DETERMLY_CHAT_NAME` | `Assistant` | Name on the execution frame. |
 | `DETERMLY_CHAT_TITLE` | `Assistant` | Launcher title. |

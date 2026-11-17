@@ -20,7 +20,7 @@ Prism (`examples/support-chat/.env.prism.example`):
 ```dotenv
 DETERMLY_CHAT_AI=prism
 DETERMLY_CHAT_PROVIDER=openrouter
-DETERMLY_CHAT_MODEL=openai/gpt-4o-mini
+DETERMLY_CHAT_MODEL=openai/gpt-4.1-mini
 ```
 
 Laravel AI (`examples/support-chat/.env.laravel-ai.example`):
@@ -28,10 +28,10 @@ Laravel AI (`examples/support-chat/.env.laravel-ai.example`):
 ```dotenv
 DETERMLY_CHAT_AI=laravel-ai
 DETERMLY_CHAT_PROVIDER=openrouter
-DETERMLY_CHAT_MODEL=openai/gpt-4o-mini
+DETERMLY_CHAT_MODEL=openai/gpt-4.1-mini
 ```
 
-The package defaults are `openrouter` and `openai/gpt-4o-mini`. If both libraries are installed and `DETERMLY_CHAT_AI` is `auto`, the first message is an error. Set the value. Provider credentials stay in the library's own env vars. OpenRouter uses `OPENROUTER_API_KEY`. This package does not read that key, and `config/determly-chat.php` has no key parameter.
+The package defaults are `openrouter` and `openai/gpt-4.1-mini`. If both libraries are installed and `DETERMLY_CHAT_AI` is `auto`, the first message is an error. Set the value. Provider credentials stay in the library's own env vars. OpenRouter uses `OPENROUTER_API_KEY`. This package does not read that key, and `config/determly-chat.php` has no key parameter.
 
 `php artisan determly:chat` prints the selected library.
 
