@@ -1,0 +1,30 @@
+{
+    "name": "determly/chat-laravel",
+    "description": "Mounts the Persona chat widget on any Laravel stack and streams the Persona SSE wire.",
+    "type": "library",
+    "license": "MIT",
+    "version": "0.1.0",
+    "require": {
+        "php": ">=8.3",
+        "determly/chat": "^0.1.0",
+        "illuminate/console": "^12.0 || ^13.0",
+        "illuminate/http": "^12.0 || ^13.0",
+        "illuminate/routing": "^12.0 || ^13.0",
+        "illuminate/support": "^12.0 || ^13.0",
+        "illuminate/view": "^12.0 || ^13.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Determly\\Chat\\Laravel\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Determly\\Chat\\Laravel\\ChatServiceProvider"
+            ]
+        }
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true
+}
