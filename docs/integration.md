@@ -1,5 +1,7 @@
 # Integration
 
+Install steps, Laravel AI, Prism, and each front end: [installation.md](installation.md).
+
 One widget, one dispatch route, every Laravel stack. The packages do not ship a Livewire component, a Filament plugin, an Inertia page, or a Blade layout. The app keeps its own UI and listens to the widget.
 
 Widget: `@runtypelabs/persona` 4.39.0. Server events and browser events: [events.md](events.md). A worked chat for Prism and Laravel AI: [examples/support-chat](../examples/support-chat).

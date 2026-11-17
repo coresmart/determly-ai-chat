@@ -1,6 +1,6 @@
 # Components and features
 
-The widget is `@runtypelabs/persona` 4.39.0. These are the advanced features Determly turns on, and the three components it registers. Voice, file attachments, and a custom speech provider stay in the app, because each one needs its own service.
+The widget is `@runtypelabs/persona` 4.39.0. These are the advanced features Determly turns on, and the three components it registers. The full gallery, including the demos this package leaves off, is in [advanced-examples.md](advanced-examples.md). Voice, file attachments, and a custom speech provider stay in the app, because each one needs its own service.
 
 ## Components in the transcript
 
