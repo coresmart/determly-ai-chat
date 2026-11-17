@@ -9,7 +9,7 @@ Install and the per-stack refresh calls are in [installation.md](installation.md
 | Example | Persona group | In this package |
 |---|---|---|
 | [Talk to Your Data](https://www.persona-chat.dev/analytics-agent-demo.html) | Generative UX | You build it from a server tool plus an artifact. |
-| [Ask User Question and Suggested Replies](https://www.persona-chat.dev/ask-user-question-demo.html) | Generative UX | On. `DETERMINLY_CHAT_ASK` and follow-up chips. |
+| [Ask User Question and Suggested Replies](https://www.persona-chat.dev/ask-user-question-demo.html) | Generative UX | On. `DETERMLY_CHAT_ASK` and follow-up chips. |
 | [Artifact Sidebar](https://www.persona-chat.dev/artifact-demo.html) | Generative UX | On. `emit_artifact_markdown` and `emit_artifact_component`. |
 | [Dynamic Components](https://www.persona-chat.dev/dynamic-components.html) | Generative UX | On. `DynamicForm`, `ProductCard`, and `Notice`. |
 | [Voice Input and Output](https://www.persona-chat.dev/voice-integration-demo.html) | Generative UX | Not enabled. Needs a speech service. |
@@ -42,7 +42,7 @@ In Laravel the rows live in the database. Register one tool that runs the query 
 
 The demo has two tools. `ask_user_question` blocks until the visitor picks. `suggest_replies` shows chips and continues.
 
-Both are advertised by the injected widget. `DETERMINLY_CHAT_ASK=false` stops the question tool. Follow-up chips stay available. Starter chips are "What can you do?" and "What tools are available?". The model instructions already mention both tools. Echo mode emits two suggestions on its own and does not call a model.
+Both are advertised by the injected widget. `DETERMLY_CHAT_ASK=false` stops the question tool. Follow-up chips stay available. Starter chips are "What can you do?" and "What tools are available?". The model instructions already mention both tools. Echo mode emits two suggestions on its own and does not call a model.
 
 The question pause is `step_await` with `awaitReason: local_tool_required`. The widget shows the sheet and posts `/determly/chat/dispatch/resume`.
 
@@ -50,7 +50,7 @@ The question pause is `step_await` with `awaitReason: local_tool_required`. The 
 
 The demo streams markdown and registered components into a resizable pane. On a narrow screen the pane is a drawer.
 
-`DETERMINLY_CHAT_ARTIFACTS` defaults to on, for `markdown` and `component`. The model calls:
+`DETERMLY_CHAT_ARTIFACTS` defaults to on, for `markdown` and `component`. The model calls:
 
 - `emit_artifact_markdown` with `title` and `content`
 - `emit_artifact_component` with `title`, `component`, and `props` as a JSON object string

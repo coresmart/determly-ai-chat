@@ -100,7 +100,7 @@ The widget posts `{dispatch}/resume` with:
 
 ## Widget handle events
 
-Subscribe after the widget is ready. The injected script sets `windowKey` to `determlyChat` unless `DETERMINLY_CHAT_WINDOW_KEY` changes it.
+Subscribe after the widget is ready. The injected script sets `windowKey` to `determlyChat` unless `DETERMLY_CHAT_WINDOW_KEY` changes it.
 
 ```js
 window.addEventListener('persona:chat-ready', function (event) {

@@ -26,13 +26,13 @@ Field types are `text`, `email`, `tel`, `url`, `number`, `date`, `time`, and `te
 
 `ProductCard` props are `title`, `price`, `description`, and `button`. The button sends "Add {title} to the cart." `Notice` props are `title`, `body`, and `tone` (`info`, `success`, or `warning`).
 
-A form submit and the product button call `sendMessage` on `window.determlyChat` (or `DETERMINLY_CHAT_WINDOW_KEY`). The page can register more components on `window.DetermlyChatComponents` before the widget script runs. The same names work in an artifact pane.
+A form submit and the product button call `sendMessage` on `window.determlyChat` (or `DETERMLY_CHAT_WINDOW_KEY`). The page can register more components on `window.DetermlyChatComponents` before the widget script runs. The same names work in an artifact pane.
 
 The model instructions in `determly/chat-laravel` describe this JSON. Echo mode ignores it and keeps streaming plain text.
 
 ## Artifact pane
 
-`DETERMINLY_CHAT_ARTIFACTS` defaults to on. The widget enables `features.artifacts` for `markdown` and `component`.
+`DETERMLY_CHAT_ARTIFACTS` defaults to on. The widget enables `features.artifacts` for `markdown` and `component`.
 
 Two server tools open the pane. The runner emits Persona artifact frames and does not show the tool call in the transcript.
 
@@ -45,7 +45,7 @@ Two server tools open the pane. The runner emits Persona artifact frames and doe
 
 ## Questions and follow-ups
 
-`DETERMINLY_CHAT_ASK` defaults to on. That sets `features.askUserQuestion.expose`, so the widget offers `ask_user_question` on each turn. The server pauses with `local_tool_required`. The widget shows the answer sheet and posts `/resume`.
+`DETERMLY_CHAT_ASK` defaults to on. That sets `features.askUserQuestion.expose`, so the widget offers `ask_user_question` on each turn. The server pauses with `local_tool_required`. The widget shows the answer sheet and posts `/resume`.
 
 `suggestions.followUps.expose` is on, so the model can call `suggest_replies`. The widget shows the chips and resumes. Starter chips are still "What can you do?" and "What tools are available?".
 
@@ -55,12 +55,12 @@ Reasoning and tool calls stay visible (`features.showReasoning`, `features.showT
 
 ## Layout
 
-`DETERMINLY_CHAT_MOUNT` is `floating` (the default), `docked`, or `fullscreen`.
+`DETERMLY_CHAT_MOUNT` is `floating` (the default), `docked`, or `fullscreen`.
 
 | Mount | What the visitor sees |
 |---|---|
 | `floating` | Launcher in the corner. `target` stays `body`. |
-| `docked` | Side panel around `DETERMINLY_CHAT_TARGET`. Set that to a region such as `#workspace`. `body` and `html` are rejected. `DETERMINLY_CHAT_DOCK_SIDE` is `left` or `right`. `DETERMINLY_CHAT_DOCK_WIDTH` defaults to `420px`. The region needs a real height. |
-| `fullscreen` | Launcher off, `fullHeight` on. Point `DETERMINLY_CHAT_TARGET` at the element that should fill. |
+| `docked` | Side panel around `DETERMLY_CHAT_TARGET`. Set that to a region such as `#workspace`. `body` and `html` are rejected. `DETERMLY_CHAT_DOCK_SIDE` is `left` or `right`. `DETERMLY_CHAT_DOCK_WIDTH` defaults to `420px`. The region needs a real height. |
+| `fullscreen` | Launcher off, `fullHeight` on. Point `DETERMLY_CHAT_TARGET` at the element that should fill. |
 
 `php artisan determly:chat` prints the mount, the target, artifacts, ask-user, and the component names. A docked target of `body` or `html` fails that command.

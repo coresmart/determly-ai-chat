@@ -50,7 +50,7 @@ A working install prints the Persona version `4.39.0`, the detected stack, the d
 
 The chat package does not install a model library. Echo answers until you install one. The adapters were written against `laravel/ai` 1.4.0 and `prism-php/prism` 0.103.0.
 
-| What is installed | `DETERMINLY_CHAT_AI` | Who answers |
+| What is installed | `DETERMLY_CHAT_AI` | Who answers |
 |---|---|---|
 | Neither library | `auto` (the default) | Echo. It repeats the visitor and offers two suggestions. |
 | Only `laravel/ai` | `auto` | Laravel AI |
@@ -68,16 +68,16 @@ The chat package does not install a model library. Echo answers until you instal
 composer require laravel/ai:^1.4
 ```
 
-Publish Laravel AI's own config the way that package documents, then set its key. With `DETERMINLY_CHAT_PROVIDER` and `DETERMINLY_CHAT_MODEL` empty, Laravel AI uses the default in `config/ai.php`, which is `openai`, and that library's default model. Set them when the chat should pin a provider or a model:
+Publish Laravel AI's own config the way that package documents, then set its key. With `DETERMLY_CHAT_PROVIDER` and `DETERMLY_CHAT_MODEL` empty, Laravel AI uses the default in `config/ai.php`, which is `openai`, and that library's default model. Set them when the chat should pin a provider or a model:
 
 ```dotenv
-DETERMINLY_CHAT_AI=laravel-ai
-DETERMINLY_CHAT_PROVIDER=openai
-DETERMINLY_CHAT_MODEL=gpt-4o-mini
+DETERMLY_CHAT_AI=laravel-ai
+DETERMLY_CHAT_PROVIDER=openai
+DETERMLY_CHAT_MODEL=gpt-4o-mini
 OPENAI_API_KEY=
 ```
 
-`DETERMINLY_CHAT_PROVIDER` is passed to Laravel AI as the provider name. Laravel AI 1.4 accepts `anthropic`, `azure`, `bedrock`, `cohere`, `deepseek`, `eleven`, `gemini`, `groq`, `jina`, `mistral`, `ollama`, `openai`, `openai-compatible`, `openrouter`, `typesafe`, `voyageai`, and `xai`. The key stays in that library's env var (`OPENAI_API_KEY`, `ANTHROPIC_API_KEY`, `GEMINI_API_KEY`, and the rest of `config/ai.php`). This package never reads the key.
+`DETERMLY_CHAT_PROVIDER` is passed to Laravel AI as the provider name. Laravel AI 1.4 accepts `anthropic`, `azure`, `bedrock`, `cohere`, `deepseek`, `eleven`, `gemini`, `groq`, `jina`, `mistral`, `ollama`, `openai`, `openai-compatible`, `openrouter`, `typesafe`, `voyageai`, and `xai`. The key stays in that library's env var (`OPENAI_API_KEY`, `ANTHROPIC_API_KEY`, `GEMINI_API_KEY`, and the rest of `config/ai.php`). This package never reads the key.
 
 `eleven` is Laravel AI's name. Prism calls the same vendor `elevenlabs`. Do not copy one name into the other library.
 
@@ -90,31 +90,31 @@ composer require prism-php/prism:^0.103
 Prism has no default provider. Both values are required:
 
 ```dotenv
-DETERMINLY_CHAT_AI=prism
-DETERMINLY_CHAT_PROVIDER=openai
-DETERMINLY_CHAT_MODEL=gpt-4o-mini
+DETERMLY_CHAT_AI=prism
+DETERMLY_CHAT_PROVIDER=openai
+DETERMLY_CHAT_MODEL=gpt-4o-mini
 OPENAI_API_KEY=
 ```
 
-`DETERMINLY_CHAT_PROVIDER` is passed to `Prism::text()->using()`. Prism 0.103 accepts `anthropic`, `deepseek`, `ollama`, `openai`, `openrouter`, `mistral`, `groq`, `xai`, `gemini`, `voyageai`, `elevenlabs`, `perplexity`, and `z`. Keys are the ones in Prism's `config/prism.php`, such as `OPENAI_API_KEY` and `ANTHROPIC_API_KEY`.
+`DETERMLY_CHAT_PROVIDER` is passed to `Prism::text()->using()`. Prism 0.103 accepts `anthropic`, `deepseek`, `ollama`, `openai`, `openrouter`, `mistral`, `groq`, `xai`, `gemini`, `voyageai`, `elevenlabs`, `perplexity`, and `z`. Keys are the ones in Prism's `config/prism.php`, such as `OPENAI_API_KEY` and `ANTHROPIC_API_KEY`.
 
 ### Both libraries in one app
 
 Install both when different parts of the app use different libraries. The chat will not pick one for you.
 
 ```dotenv
-DETERMINLY_CHAT_AI=laravel-ai
+DETERMLY_CHAT_AI=laravel-ai
 ```
 
 or:
 
 ```dotenv
-DETERMINLY_CHAT_AI=prism
-DETERMINLY_CHAT_PROVIDER=openai
-DETERMINLY_CHAT_MODEL=gpt-4o-mini
+DETERMLY_CHAT_AI=prism
+DETERMLY_CHAT_PROVIDER=openai
+DETERMLY_CHAT_MODEL=gpt-4o-mini
 ```
 
-Change `DETERMINLY_CHAT_AI` and restart the PHP process to switch the chat. The tools do not change.
+Change `DETERMLY_CHAT_AI` and restart the PHP process to switch the chat. The tools do not change.
 
 ### One tool class for either library
 
@@ -200,11 +200,11 @@ The worked copy of this tool, plus a Prism env file and a Laravel AI env file, i
 
 Paused executions are stored in the default cache store for one hour, under `determly-chat:execution:{id}`. Use a store that survives the next HTTP request. The `array` cache driver does not. `file`, `database`, or `redis` does.
 
-`DETERMINLY_CHAT_INSTRUCTIONS` replaces the default system text. The default tells the model about tools, the JSON components, the artifact tools, `ask_user_question`, and `suggest_replies`.
+`DETERMLY_CHAT_INSTRUCTIONS` replaces the default system text. The default tells the model about tools, the JSON components, the artifact tools, `ask_user_question`, and `suggest_replies`.
 
 ## 3. Front ends
 
-Detection uses package names, not versions. `php artisan determly:chat` prints the result. `DETERMINLY_CHAT_STACK` overrides it with `filament`, `livewire`, `inertia-react`, `inertia-vue`, `inertia`, or `blade`.
+Detection uses package names, not versions. `php artisan determly:chat` prints the result. `DETERMLY_CHAT_STACK` overrides it with `filament`, `livewire`, `inertia-react`, `inertia-vue`, `inertia`, or `blade`.
 
 | Installed | Reported stack |
 |---|---|
@@ -225,7 +225,7 @@ Injection is on by default. It inserts the widget before the first `</body>` of 
 
 `wire:navigate` and Filament SPA mode fetch a full document and send `X-Livewire-Navigate`, not `X-Livewire`, so the script is added again on that document. The marker `determly-chat-widget` only stops a second copy inside one response.
 
-Set `DETERMINLY_CHAT_INJECT=false` and render the component yourself when the layout should own the tag. It emits the same HTML.
+Set `DETERMLY_CHAT_INJECT=false` and render the component yourself when the layout should own the tag. It emits the same HTML.
 
 ```blade
 <x-determly-chat />
@@ -239,7 +239,7 @@ window.addEventListener('persona:chat-ready', function (event) {
 });
 ```
 
-`window.determlyChat` is the same handle. Change it with `DETERMINLY_CHAT_WINDOW_KEY`. A launcher that waits for the first open fires `persona:chat-ready` at that open.
+`window.determlyChat` is the same handle. Change it with `DETERMLY_CHAT_WINDOW_KEY`. A launcher that waits for the first open fires `persona:chat-ready` at that open.
 
 ### Blade
 
@@ -346,7 +346,7 @@ The listener is the same `persona:chat-ready` event.
 
 A page tool runs in the browser. The server pauses, Persona runs it, and posts the result to `/determly/chat/dispatch/resume`. Use one when the work has to happen on the page before the model continues. Use `assistant:complete` when a server tool already changed the data and the page only needs to reload.
 
-`DETERMINLY_CHAT_WEBMCP` defaults to true. Register the tool on `document.modelContext` before the visitor sends:
+`DETERMLY_CHAT_WEBMCP` defaults to true. Register the tool on `document.modelContext` before the visitor sends:
 
 ```js
 document.addEventListener('DOMContentLoaded', function () {
@@ -382,10 +382,10 @@ The model sees the bare name `refresh_orders`, the description, and the schema. 
 These are on unless you turn them off. The field lists and the JSON the model returns are in [components.md](components.md).
 
 - `DynamicForm`, `ProductCard`, and `Notice` render inside the transcript when the model replies with one JSON object that has `text` and `component`. Plain text stays plain text.
-- `emit_artifact_markdown` and `emit_artifact_component` open the side pane. `DETERMINLY_CHAT_ARTIFACTS=false` turns the pane off.
-- `ask_user_question` shows the answer sheet and waits. `DETERMINLY_CHAT_ASK=false` stops advertising it.
+- `emit_artifact_markdown` and `emit_artifact_component` open the side pane. `DETERMLY_CHAT_ARTIFACTS=false` turns the pane off.
+- `ask_user_question` shows the answer sheet and waits. `DETERMLY_CHAT_ASK=false` stops advertising it.
 - `suggest_replies` shows follow-up chips. Starter chips are "What can you do?" and "What tools are available?".
-- `DETERMINLY_CHAT_MOUNT` is `floating`, `docked`, or `fullscreen`. Docked needs `DETERMINLY_CHAT_TARGET` set to a region such as `#workspace`. `body` and `html` are rejected. The region needs a real height. `DETERMINLY_CHAT_DOCK_SIDE` is `left` or `right`. `DETERMINLY_CHAT_DOCK_WIDTH` defaults to `420px`. Fullscreen turns the launcher off and fills `DETERMINLY_CHAT_TARGET`.
+- `DETERMLY_CHAT_MOUNT` is `floating`, `docked`, or `fullscreen`. Docked needs `DETERMLY_CHAT_TARGET` set to a region such as `#workspace`. `body` and `html` are rejected. The region needs a real height. `DETERMLY_CHAT_DOCK_SIDE` is `left` or `right`. `DETERMLY_CHAT_DOCK_WIDTH` defaults to `420px`. Fullscreen turns the launcher off and fills `DETERMLY_CHAT_TARGET`.
 
 Server frames and widget handle events are in [events.md](events.md).
 
@@ -397,23 +397,23 @@ Boolean env values accept `true`, `false`, `1`, `0`, `yes`, and `no`.
 
 | Env | Default | Purpose |
 |---|---|---|
-| `DETERMINLY_CHAT_INJECT` | `true` | Insert the widget before `</body>`. |
-| `DETERMINLY_CHAT_AI` | `auto` | `auto`, `echo`, `laravel-ai`, or `prism`. |
-| `DETERMINLY_CHAT_PROVIDER` | empty | Provider name for the selected library. Optional for Laravel AI. Required for Prism. |
-| `DETERMINLY_CHAT_MODEL` | empty | Model name. Optional for Laravel AI. Required for Prism. |
-| `DETERMINLY_CHAT_INSTRUCTIONS` | package default | System text. |
-| `DETERMINLY_CHAT_NAME` | `Assistant` | Name on the execution frame. |
-| `DETERMINLY_CHAT_TITLE` | `Assistant` | Launcher title. |
-| `DETERMINLY_CHAT_SUBTITLE` | `Ask a question` | Launcher subtitle. |
-| `DETERMINLY_CHAT_WINDOW_KEY` | `determlyChat` | `window` handle. Empty omits it. |
-| `DETERMINLY_CHAT_WEBMCP` | `true` | Snapshot `document.modelContext` each turn. |
-| `DETERMINLY_CHAT_STACK` | empty | Force the stack label. |
-| `DETERMINLY_CHAT_TARGET` | `body` | CSS selector the widget mounts on. |
-| `DETERMINLY_CHAT_MOUNT` | `floating` | `floating`, `docked`, or `fullscreen`. |
-| `DETERMINLY_CHAT_DOCK_SIDE` | `right` | `left` or `right`. |
-| `DETERMINLY_CHAT_DOCK_WIDTH` | `420px` | Docked panel width. |
-| `DETERMINLY_CHAT_ARTIFACTS` | `true` | Artifact pane. |
-| `DETERMINLY_CHAT_ASK` | `true` | Advertise `ask_user_question`. |
+| `DETERMLY_CHAT_INJECT` | `true` | Insert the widget before `</body>`. |
+| `DETERMLY_CHAT_AI` | `auto` | `auto`, `echo`, `laravel-ai`, or `prism`. |
+| `DETERMLY_CHAT_PROVIDER` | empty | Provider name for the selected library. Optional for Laravel AI. Required for Prism. |
+| `DETERMLY_CHAT_MODEL` | empty | Model name. Optional for Laravel AI. Required for Prism. |
+| `DETERMLY_CHAT_INSTRUCTIONS` | package default | System text. |
+| `DETERMLY_CHAT_NAME` | `Assistant` | Name on the execution frame. |
+| `DETERMLY_CHAT_TITLE` | `Assistant` | Launcher title. |
+| `DETERMLY_CHAT_SUBTITLE` | `Ask a question` | Launcher subtitle. |
+| `DETERMLY_CHAT_WINDOW_KEY` | `determlyChat` | `window` handle. Empty omits it. |
+| `DETERMLY_CHAT_WEBMCP` | `true` | Snapshot `document.modelContext` each turn. |
+| `DETERMLY_CHAT_STACK` | empty | Force the stack label. |
+| `DETERMLY_CHAT_TARGET` | `body` | CSS selector the widget mounts on. |
+| `DETERMLY_CHAT_MOUNT` | `floating` | `floating`, `docked`, or `fullscreen`. |
+| `DETERMLY_CHAT_DOCK_SIDE` | `right` | `left` or `right`. |
+| `DETERMLY_CHAT_DOCK_WIDTH` | `420px` | Docked panel width. |
+| `DETERMLY_CHAT_ARTIFACTS` | `true` | Artifact pane. |
+| `DETERMLY_CHAT_ASK` | `true` | Advertise `ask_user_question`. |
 
 `path` defaults to `determly/chat/dispatch`. `agent_id` defaults to `determly`. Override those two in `config/determly-chat.php`. The approval URL is `{path}/v1/agents/{agent_id}/approve`. The widget strips a trailing `/v1/dispatch` from `apiUrl` when it builds that URL, so keep `path` ending in `/dispatch` if you change it.
 
@@ -421,12 +421,12 @@ Boolean env values accept `true`, `false`, `1`, `0`, `yes`, and `no`.
 
 | What you see | What to change |
 |---|---|
-| `php artisan determly:chat` says both libraries are installed | Set `DETERMINLY_CHAT_AI` to `laravel-ai` or `prism`. |
-| The message says Prism needs `DETERMINLY_CHAT_PROVIDER` and `DETERMINLY_CHAT_MODEL` | Set both. |
-| The message says the chosen library is not installed | Install that library, or set `DETERMINLY_CHAT_AI` to the one that is installed, or set `echo`. |
-| The launcher never appears | The response is not full HTML on the `web` group, or `DETERMINLY_CHAT_INJECT=false`. Render `<x-determly-chat />`. |
+| `php artisan determly:chat` says both libraries are installed | Set `DETERMLY_CHAT_AI` to `laravel-ai` or `prism`. |
+| The message says Prism needs `DETERMLY_CHAT_PROVIDER` and `DETERMLY_CHAT_MODEL` | Set both. |
+| The message says the chosen library is not installed | Install that library, or set `DETERMLY_CHAT_AI` to the one that is installed, or set `echo`. |
+| The launcher never appears | The response is not full HTML on the `web` group, or `DETERMLY_CHAT_INJECT=false`. Render `<x-determly-chat />`. |
 | The launcher appears twice after `wire:navigate` | Expected. Each HTML document gets one copy. The marker stops a second copy in the same response. |
-| A page tool never runs | `DETERMINLY_CHAT_WEBMCP` is false, or `document.modelContext.registerTool` ran after the message was sent. |
+| A page tool never runs | `DETERMLY_CHAT_WEBMCP` is false, or `document.modelContext.registerTool` ran after the message was sent. |
 | Resume or approval says nothing is waiting | The default cache store is `array`, or the hour-long entry expired. |
-| Docked mount fails `determly:chat` | Set `DETERMINLY_CHAT_TARGET` to a region other than `body` or `html`. |
+| Docked mount fails `determly:chat` | Set `DETERMLY_CHAT_TARGET` to a region other than `body` or `html`. |
 | A tool name is rejected | Use a lowercase identifier, at most 64 characters, and do not reuse `emit_artifact_markdown` or `emit_artifact_component`. |

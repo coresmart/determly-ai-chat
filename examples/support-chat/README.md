@@ -1,6 +1,6 @@
 # Support chat
 
-One tool, two model libraries. The app registers `lookup_order` once. `DETERMINLY_CHAT_AI` chooses Laravel AI or Prism. The page script refreshes the orders table and exposes `refresh_orders` to the widget.
+One tool, two model libraries. The app registers `lookup_order` once. `DETERMLY_CHAT_AI` chooses Laravel AI or Prism. The page script refreshes the orders table and exposes `refresh_orders` to the widget.
 
 This is not a second Laravel application. Copy the tool and the script into the app. The workspace test `SupportChatExampleTest` runs the tool through both responders with fakes, so it does not call a provider.
 
@@ -18,20 +18,20 @@ Copy one env file into the app `.env`.
 Prism (`examples/support-chat/.env.prism.example`):
 
 ```dotenv
-DETERMINLY_CHAT_AI=prism
-DETERMINLY_CHAT_PROVIDER=openai
-DETERMINLY_CHAT_MODEL=gpt-4o-mini
+DETERMLY_CHAT_AI=prism
+DETERMLY_CHAT_PROVIDER=openai
+DETERMLY_CHAT_MODEL=gpt-4o-mini
 ```
 
 Laravel AI (`examples/support-chat/.env.laravel-ai.example`):
 
 ```dotenv
-DETERMINLY_CHAT_AI=laravel-ai
-DETERMINLY_CHAT_PROVIDER=openai
-DETERMINLY_CHAT_MODEL=gpt-4o-mini
+DETERMLY_CHAT_AI=laravel-ai
+DETERMLY_CHAT_PROVIDER=openai
+DETERMLY_CHAT_MODEL=gpt-4o-mini
 ```
 
-Prism requires both the provider and the model. Laravel AI uses its own defaults when those two are empty. If both libraries are installed and `DETERMINLY_CHAT_AI` is `auto`, the first message is an error. Set the value. Provider credentials stay in the library's own env vars (`OPENAI_API_KEY` and the rest). This package does not read them.
+Prism requires both the provider and the model. Laravel AI uses its own defaults when those two are empty. If both libraries are installed and `DETERMLY_CHAT_AI` is `auto`, the first message is an error. Set the value. Provider credentials stay in the library's own env vars (`OPENAI_API_KEY` and the rest). This package does not read them.
 
 `php artisan determly:chat` prints the selected library.
 
@@ -65,7 +65,7 @@ The visitor asks "Where is order 1001?".
 
 A page tool is the other path. `resources/js/determly-chat.js` registers `refresh_orders` on `document.modelContext`. The widget sends it as a client tool with `origin: webmcp`. The runner pauses with `step_await`, `awaitReason: local_tool_required`, and `origin: webmcp`. Persona 4.39.0 runs the browser tool and posts `/determly/chat/dispatch/resume`. Read-only tools (`annotations.readOnlyHint`) skip the confirm bubble. Other page tools ask first.
 
-Load the script from your layout. The widget is already injected before `</body>` unless `DETERMINLY_CHAT_INJECT=false`.
+Load the script from your layout. The widget is already injected before `</body>` unless `DETERMLY_CHAT_INJECT=false`.
 
 ## A form inside the reply
 

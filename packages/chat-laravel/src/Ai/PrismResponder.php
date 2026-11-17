@@ -35,7 +35,7 @@ final class PrismResponder implements Responder
     public function respond(Turn $turn): iterable
     {
         if ($this->provider === null || $this->model === null) {
-            throw new InvalidChat('Prism needs DETERMINLY_CHAT_PROVIDER and DETERMINLY_CHAT_MODEL.');
+            throw new InvalidChat('Prism needs DETERMLY_CHAT_PROVIDER and DETERMLY_CHAT_MODEL.');
         }
 
         $split = Transcript::split($this->instructions, $turn->messages);

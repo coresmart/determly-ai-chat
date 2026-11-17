@@ -68,7 +68,7 @@ final class AiTest extends TestCase
     public function test_both_sdks_require_an_explicit_choice(): void
     {
         $this->expectException(InvalidChat::class);
-        $this->expectExceptionMessage('Set DETERMINLY_CHAT_AI');
+        $this->expectExceptionMessage('Set DETERMLY_CHAT_AI');
         AiChoice::resolve('auto', true, true);
     }
 
@@ -252,7 +252,7 @@ final class AiTest extends TestCase
         $frames = $this->play(new PrismResponder(new ToolRegistry, 'Be brief.', null, null), new ToolRegistry);
 
         $error = $this->event($frames, 'execution_error');
-        $this->assertStringContainsString('DETERMINLY_CHAT_MODEL', $error->data['error']['message']);
+        $this->assertStringContainsString('DETERMLY_CHAT_MODEL', $error->data['error']['message']);
     }
 
     /**
