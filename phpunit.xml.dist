@@ -11,5 +11,8 @@
         <testsuite name="chat-laravel">
             <directory>packages/chat-laravel/tests</directory>
         </testsuite>
+        <testsuite name="gallery">
+            <directory>examples/gallery/tests</directory>
+        </testsuite>
     </testsuites>
 </phpunit>
