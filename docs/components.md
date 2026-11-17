@@ -63,4 +63,10 @@ Reasoning and tool calls stay visible (`features.showReasoning`, `features.showT
 | `docked` | Side panel around `DETERMLY_CHAT_TARGET`. Set that to a region such as `#workspace`. `body` and `html` are rejected. `DETERMLY_CHAT_DOCK_SIDE` is `left` or `right`. `DETERMLY_CHAT_DOCK_WIDTH` defaults to `420px`. The region needs a real height. |
 | `fullscreen` | Launcher off, `fullHeight` on. Point `DETERMLY_CHAT_TARGET` at the element that should fill. |
 
-`php artisan determly:chat` prints the mount, the target, artifacts, ask-user, and the component names. A docked target of `body` or `html` fails that command.
+`php artisan determly:chat` prints the mount, the target, artifacts, ask-user, the theme, and the component names. A docked target of `body` or `html` fails that command.
+
+## Theme
+
+The widget color, type, and corners come from Persona 4.39.0's `colorScheme`, `brand`, and token tree. Determly reads them from `config/determly-chat.php` under `appearance`, and from `Determly\Chat\Laravel\Theme` when you assign that object in a service provider. Empty values leave Persona's colors in place.
+
+The env keys are `DETERMLY_CHAT_COLOR_SCHEME`, `DETERMLY_CHAT_ACCENT`, `DETERMLY_CHAT_NEUTRAL`, `DETERMLY_CHAT_FONT`, `DETERMLY_CHAT_RADIUS`, `DETERMLY_CHAT_DENSITY`, and `DETERMLY_CHAT_ELEVATION`. Nested `palette`, `semantic`, and `components` tokens are set in the config file or in PHP. The full lists, the config file, and the `Theme` chain are in [installation.md](installation.md). The gallery page `/examples/theme` is one `Theme` already passed into the widget.

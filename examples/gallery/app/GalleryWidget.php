@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Determly\Chat\Gallery;
 
+use Determly\Chat\Laravel\Theme;
 use Determly\Chat\Laravel\Widget;
 
 final class GalleryWidget
@@ -15,6 +16,7 @@ final class GalleryWidget
             '/examples/'.$slug.'/dispatch',
             $example['title'],
             $example['subtitle'],
+            theme: $slug === 'theme' ? self::theme() : null,
         );
         $starters = json_encode(
             $example['starters'],
@@ -31,6 +33,26 @@ final class GalleryWidget
                 JS;
         }
 
+        return self::starters($html, $extra);
+    }
+
+    private static function theme(): Theme
+    {
+        return Theme::make()
+            ->accent('#0f766e')
+            ->neutral('#f8fafc')
+            ->font('Georgia, "Times New Roman", serif')
+            ->radius('lg')
+            ->density('comfortable')
+            ->elevation('subtle')
+            ->colors([
+                'surface' => '#ffffff',
+                'text' => '#134e4a',
+            ]);
+    }
+
+    private static function starters(string $html, string $extra): string
+    {
         return str_replace(
             'window.siteAgentConfig.config.streamParser = window.DetermlyChatStreamParser;',
             "window.siteAgentConfig.config.streamParser = window.DetermlyChatStreamParser;\n".$extra,

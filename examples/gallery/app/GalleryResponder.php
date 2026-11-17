@@ -35,6 +35,7 @@ final class GalleryResponder implements Responder
             'shadow' => $this->shadow($turn),
             'tables' => $this->tables(),
             'loaders' => $this->loaders($turn),
+            'theme' => [Step::text('This chat is themed in PHP: teal accent #0f766e, a white surface, and a serif font.')],
             default => [Step::text('Open an example from the gallery home page.')],
         };
     }
