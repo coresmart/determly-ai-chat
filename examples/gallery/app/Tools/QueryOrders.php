@@ -27,6 +27,7 @@ final class QueryOrders implements Tool
                 'status' => [
                     'type' => 'string',
                     'description' => 'all, open, paid, or shipped.',
+                    'enum' => ['all', 'open', 'paid', 'shipped'],
                 ],
             ],
         ];
