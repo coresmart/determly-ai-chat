@@ -51,8 +51,8 @@ final class GalleryResponderTest extends TestCase
             'messages' => [['role' => 'user', 'content' => 'Refund order 1001']],
         ], $tools, $store);
 
-        $this->assertContains('agent_approval_start', $this->names($paused));
-        $await = $this->event($paused, 'step_await');
+        $this->assertContains('approval_start', $this->names($paused));
+        $await = $this->event($paused, 'await');
         $this->assertSame('approval_required', $await->data['awaitReason']);
         $this->assertSame('refund_order', $await->data['toolName']);
         $this->assertNotContains('execution_complete', $this->names($paused));
@@ -80,7 +80,7 @@ final class GalleryResponderTest extends TestCase
             ]],
         ], store: $store);
 
-        $await = $this->event($paused, 'step_await');
+        $await = $this->event($paused, 'await');
         $this->assertSame('local_tool_required', $await->data['awaitReason']);
         $this->assertSame('ask_user_question', $await->data['toolName']);
         $this->assertSame('webmcp', $await->data['origin']);
@@ -96,6 +96,26 @@ final class GalleryResponderTest extends TestCase
 
         $this->assertContains('suggest_replies', $this->toolNames($continued));
         $this->assertStringContainsString('Thanks', $this->text($continued));
+    }
+
+    public function test_add_to_cart_pauses_so_the_page_can_run_it(): void
+    {
+        $paused = $this->play('actions', [
+            'messages' => [['role' => 'user', 'content' => 'Add the trail shoe to the cart']],
+            'clientTools' => [[
+                'name' => 'add_to_cart',
+                'origin' => 'webmcp',
+            ]],
+        ]);
+
+        $await = $this->event($paused, 'await');
+        $this->assertSame('local_tool_required', $await->data['awaitReason']);
+        $this->assertSame('add_to_cart', $await->data['toolName']);
+        $this->assertSame('webmcp', $await->data['origin']);
+        $this->assertSame('SHOE-014', $await->data['parameters']['sku']);
+        $this->assertSame('Trail shoe', $await->data['parameters']['title']);
+        $this->assertNotContains('execution_complete', $this->names($paused));
+        $this->assertNotContains('tool_complete', $this->names($paused));
     }
 
     public function test_component_reply_is_only_json(): void

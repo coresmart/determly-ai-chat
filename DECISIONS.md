@@ -26,7 +26,7 @@ There is no Livewire package, React package, or Vue package. Those would wrap th
 - Livewire update requests and Inertia JSON visits are left alone.
 - The dispatch route is same-origin and CSRF-exempt so the widget can post. The session cookie still applies.
 
-Until an AI library is bound, dispatch uses `EchoResponder`, which streams the latest user message and two suggestions. An app replaces the `Determly\Chat\Run\Responder` binding. The runner executes registered tools, pauses on `step_await` for approval or a client tool, and continues from `POST {dispatch}/resume` or `{dispatch}/v1/agents/{agent}/approve`. The execution is stored because those requests do not include the transcript. Tools from any recipe register on `ToolRegistry`. A duplicate tool name is refused.
+Until an AI library is bound, dispatch uses `EchoResponder`, which streams the latest user message and two suggestions. An app replaces the `Determly\Chat\Run\Responder` binding. The runner executes registered tools, pauses on `await` for approval or a client tool, and continues from `POST {dispatch}/resume` or `{dispatch}/v1/agents/{agent}/approve`. The execution is stored because those requests do not include the transcript. Tools from any recipe register on `ToolRegistry`. A duplicate tool name is refused.
 
 ## Laravel AI and Prism
 
@@ -40,7 +40,7 @@ The runner keeps tool execution, approval, and resume. The library proposes the 
 
 ## Page tools and the window handle
 
-The injected widget sets `windowKey` to `determlyChat` and `webmcp.enabled` to true. `DETERMLY_CHAT_WINDOW_KEY` and `DETERMLY_CHAT_WEBMCP` change those. Persona 4.39.0 snapshots `document.modelContext` only when WebMCP is enabled, and it runs a page tool when `step_await` carries `origin: webmcp` or a `webmcp:` tool name. The dispatch parser keeps `origin`, `description`, and `parametersSchema` from each client tool object. A read-only page tool (`annotations.readOnlyHint`) is auto-approved by the injected script. Other page tools still ask. The widget does not call Livewire, Filament, or Inertia. The page refreshes from `assistant:complete` or from the page tool. The event names are the 4.39.0 controller map, documented in `docs/events.md`.
+The injected widget sets `windowKey` to `determlyChat` and `webmcp.enabled` to true. `DETERMLY_CHAT_WINDOW_KEY` and `DETERMLY_CHAT_WEBMCP` change those. Persona 4.39.0 snapshots `document.modelContext` only when WebMCP is enabled, and it runs a page tool when `await` carries `origin: webmcp` or a `webmcp:` tool name. The dispatch parser keeps `origin`, `description`, and `parametersSchema` from each client tool object. A read-only page tool (`annotations.readOnlyHint`) is auto-approved by the injected script. Other page tools still ask. The widget does not call Livewire, Filament, or Inertia. The page refreshes from `assistant:complete` or from the page tool. The event names are the 4.39.0 controller map, documented in `docs/events.md`.
 
 ## Components, artifacts, and layout
 

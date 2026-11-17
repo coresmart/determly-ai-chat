@@ -93,7 +93,7 @@ document.modelContext.registerTool({
 });
 ```
 
-Persona sends the tool on `clientTools` with the bare name, the description, the JSON schema, and `origin: webmcp`. The model sees that name and that schema. The server does not run it. The pause is `step_await` with `awaitReason: local_tool_required`, `toolName`, `toolCallId`, `parameters`, and `origin: webmcp`. Persona 4.39.0 then calls `execute` and posts the result to `/resume`.
+Persona sends the tool on `clientTools` with the bare name, the description, the JSON schema, and `origin: webmcp`. The model sees that name and that schema. The server does not run it. The pause is `await` with `awaitReason: local_tool_required`, `toolName`, `toolCallId`, `parameters`, and `origin: webmcp`. Persona 4.39.0 then calls `execute` and posts the result to `/resume`.
 
 A name that starts with `webmcp:` is also treated as a page tool. A string in `clientTools` is a page tool with a generic `input` string argument. A page tool whose name is already a registered server tool keeps the server schema, and the runner still pauses so the browser runs it.
 

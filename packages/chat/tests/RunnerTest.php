@@ -84,21 +84,21 @@ final class RunnerTest extends TestCase
         }, $responder, $tools, $store);
 
         $names = $this->names($frames);
-        $this->assertContains('agent_approval_start', $names);
-        $this->assertContains('step_await', $names);
+        $this->assertContains('approval_start', $names);
+        $this->assertContains('await', $names);
         $this->assertNotContains('execution_complete', $names);
-        $this->assertSame('approval_required', $this->event($frames, 'step_await')->data['awaitReason']);
+        $this->assertSame('approval_required', $this->event($frames, 'await')->data['awaitReason']);
         $this->assertSame(0, $tool->runs);
 
         $executionId = $frames[0]->data['executionId'];
-        $approvalId = $this->event($frames, 'step_await')->data['approvalId'];
+        $approvalId = $this->event($frames, 'await')->data['approvalId'];
         $continued = $this->play(function (Runner $runner, Emitter $emit) use ($executionId, $approvalId): void {
             $runner->decide($executionId, $approvalId, 'denied', $emit);
         }, $responder, $tools, $store, $executionId);
 
         $this->assertNotContains('tool_complete', $this->names($continued));
         $this->assertSame('Stopped.', $this->event($continued, 'text_delta')->data['delta']);
-        $this->assertSame('denied', $this->event($continued, 'agent_approval_complete')->data['decision']);
+        $this->assertSame('denied', $this->event($continued, 'approval_complete')->data['decision']);
     }
 
     public function test_approved_tool_runs_once_and_can_be_remembered(): void
@@ -120,7 +120,7 @@ final class RunnerTest extends TestCase
             ]), $emit);
         }, $responder, $tools, $store);
         $executionId = $paused[0]->data['executionId'];
-        $approvalId = $this->event($paused, 'step_await')->data['approvalId'];
+        $approvalId = $this->event($paused, 'await')->data['approvalId'];
 
         $continued = $this->play(function (Runner $runner, Emitter $emit) use ($executionId, $approvalId): void {
             $runner->decide($executionId, $approvalId, 'approved', $emit, true);
@@ -146,7 +146,7 @@ final class RunnerTest extends TestCase
             ]), $emit);
         }, $responder, store: $store);
 
-        $await = $this->event($paused, 'step_await');
+        $await = $this->event($paused, 'await');
         $this->assertSame('local_tool_required', $await->data['awaitReason']);
         $this->assertSame('webmcp:cart.add', $await->data['toolName']);
         $this->assertNotContains('execution_complete', $this->names($paused));
@@ -186,7 +186,7 @@ final class RunnerTest extends TestCase
             ]), $emit);
         }, $responder);
 
-        $await = $this->event($frames, 'step_await');
+        $await = $this->event($frames, 'await');
         $this->assertSame('local_tool_required', $await->data['awaitReason']);
         $this->assertSame('refresh_orders', $await->data['toolName']);
         $this->assertSame('webmcp', $await->data['origin']);
