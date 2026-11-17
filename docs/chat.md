@@ -75,9 +75,9 @@ A text turn:
 
 A server tool closes any open text block, then sends `tool_start` and `tool_complete`. Arguments travel on `tool_start.parameters`. There is no `origin` field. Quick replies use the built-in `suggest_replies` tool.
 
-A tool that requires approval sends `agent_approval_start` and then `step_await` with `awaitReason: approval_required`. The stream stops there. The widget posts the decision to `{dispatch url}/v1/agents/{agentId}/approve` with `executionId`, `approvalId`, `decision` (`approved` or `denied`), and optional `remember`. The response is another SSE stream.
+A tool that requires approval sends `approval_start` and then `await` with `awaitReason: approval_required`. The stream stops there. The widget posts the decision to `{dispatch url}/v1/agents/{agentId}/approve` with `executionId`, `approvalId`, `decision` (`approved` or `denied`), and optional `remember`. The response is another SSE stream.
 
-A page tool (`clientTools` on the dispatch body, or a name starting with `webmcp:`) sends `step_await` with `awaitReason: local_tool_required`. A tool the page sent with `origin: webmcp` includes that `origin` on the pause so Persona 4.39.0 runs it in the browser. The description and `parametersSchema` from that object are what the model sees. A bare name gets a generic `input` string. The widget posts `{dispatch url}/resume` with `executionId` and `toolOutputs` keyed by `toolCallId`. That request does not include the transcript, so the server keeps the execution until the turn finishes. The field list is in [events.md](events.md).
+A page tool (`clientTools` on the dispatch body, or a name starting with `webmcp:`) sends `await` with `awaitReason: local_tool_required`. A tool the page sent with `origin: webmcp` includes that `origin` on the pause so Persona 4.39.0 runs it in the browser. The description and `parametersSchema` from that object are what the model sees. A bare name gets a generic `input` string. The widget posts `{dispatch url}/resume` with `executionId` and `toolOutputs` keyed by `toolCallId`. That request does not include the transcript, so the server keeps the execution until the turn finishes. The field list is in [events.md](events.md).
 
 Deltas are the text. The server does not send the full answer again at the end. The default responder streams the echo word by word, then offers two suggestions.
 

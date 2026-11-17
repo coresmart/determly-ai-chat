@@ -32,9 +32,9 @@ A dispatch, a resume, and an approval decision are each their own HTTP response.
 | `text_complete` | The answer block closes | `id` |
 | `tool_start` | A tool call is shown | `toolCallId`, `toolName`, `toolType` (`local`), `parameters`, `iteration` (`1`) |
 | `tool_complete` | A server tool finished | `toolCallId`, `success`, `result` |
-| `agent_approval_start` | A server tool needs a decision | `approvalId`, `toolName`, `toolType`, `description`, `parameters`, `executionId` |
-| `agent_approval_complete` | The decision arrived | `approvalId`, `decision` (`approved` or `denied`), `executionId` |
-| `step_await` | The turn is paused | `awaitReason`, `executionId`, plus the fields below |
+| `approval_start` | A server tool needs a decision | `approvalId`, `toolName`, `toolType`, `description`, `parameters`, `executionId` |
+| `approval_complete` | The decision arrived | `approvalId`, `decision` (`approved` or `denied`), `executionId` |
+| `await` | The turn is paused | `awaitReason`, `executionId`, plus the fields below |
 | `turn_complete` | The assistant turn ends | `id`, `role`, `iteration`, `stopReason` (`end_turn`), `completedAt` |
 | `artifact_start` | An artifact pane opens | `id`, `artifactType` (`markdown` or `component`), `title`, and `component` when the type is `component` |
 | `artifact_delta` | Markdown streams into the pane | `id`, `delta` |
@@ -67,7 +67,7 @@ Approval pause, `awaitReason: approval_required`:
 }
 ```
 
-The widget posts `{dispatch}/v1/agents/{agentId}/approve`. With the default dispatch path that URL is `/determly/chat/dispatch/v1/agents/determly/approve`. The body is `executionId`, `approvalId`, `decision` (`approved` or `denied`), and optional `remember`. `remember` stores the tool name so the next call does not ask again. Denied does not run the tool. The next SSE response starts with `execution_start`, then `agent_approval_complete`.
+The widget posts `{dispatch}/v1/agents/{agentId}/approve`. With the default dispatch path that URL is `/determly/chat/dispatch/v1/agents/determly/approve`. The body is `executionId`, `approvalId`, `decision` (`approved` or `denied`), and optional `remember`. `remember` stores the tool name so the next call does not ask again. Denied does not run the tool. The next SSE response starts with `execution_start`, then `approval_complete`.
 
 Page tool pause, `awaitReason: local_tool_required`:
 
@@ -81,7 +81,7 @@ Page tool pause, `awaitReason: local_tool_required`:
 }
 ```
 
-`origin` is present when the dispatch body sent that tool with `origin: webmcp`. Persona 4.39.0 uses that field to run the page tool. A client tool that was only a name, or a name that already starts with `webmcp:`, pauses without `origin`. The widget still resumes those calls when it recognizes the name.
+The SSE event name is `await`. Persona 4.39.0 runs a page tool only when that frame's type is `await`. `origin: webmcp` tells it to prefix the bare name with `webmcp:` and call `execute` on `document.modelContext`. A name that already starts with `webmcp:` is run the same way. The confirm bubble shows unless the tool's `annotations.readOnlyHint` is true. Allow posts `{dispatch}/resume`. Deny resumes with an error and does not call `execute`.
 
 The widget posts `{dispatch}/resume` with:
 

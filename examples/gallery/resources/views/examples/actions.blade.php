@@ -4,6 +4,7 @@
 
 @section('content')
     <div class="card">
+        <p>Allow the confirm in the chat. The trail shoe is added here only after that page tool runs.</p>
         <h2>Cart</h2>
         <ul data-cart>
             <li data-empty>Cart is empty.</li>
@@ -26,6 +27,9 @@
                     required: ['sku', 'title']
                 },
                 execute: async function (args) {
+                    if (typeof args === 'string') {
+                        try { args = JSON.parse(args); } catch (error) { args = {}; }
+                    }
                     var title = (args && args.title) || 'Item';
                     var sku = (args && args.sku) || '';
                     var list = document.querySelector('[data-cart]');

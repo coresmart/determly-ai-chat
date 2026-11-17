@@ -218,7 +218,8 @@ final class Emitter
     }
 
     /**
-     * Pause the turn. The widget resumes with POST {apiUrl}/resume or the approval URL.
+     * Pause the turn. The event name is await, which is what Persona 4.39.0 reads.
+     * The widget resumes with POST {apiUrl}/resume or the approval URL.
      * No execution_complete frame is sent.
      *
      * @param  array<string, mixed>  $fields
@@ -230,7 +231,7 @@ final class Emitter
         }
         $this->closeTextBlock();
         $this->finished = true;
-        $this->send('step_await', ['awaitReason' => $reason, 'executionId' => $this->executionId] + $fields);
+        $this->send('await', ['awaitReason' => $reason, 'executionId' => $this->executionId] + $fields);
     }
 
     /**
@@ -243,7 +244,7 @@ final class Emitter
         }
         $this->closeTextBlock();
         $this->openTurn();
-        $this->send('agent_approval_start', [
+        $this->send('approval_start', [
             'approvalId' => $approvalId,
             'toolName' => $toolName,
             'toolType' => 'local',
@@ -258,7 +259,7 @@ final class Emitter
         if ($this->finished) {
             return;
         }
-        $this->send('agent_approval_complete', [
+        $this->send('approval_complete', [
             'approvalId' => $approvalId,
             'decision' => $decision,
             'executionId' => $this->executionId,
