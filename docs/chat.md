@@ -101,7 +101,7 @@ Search and fetch do not spend credits. Agent runs do.
 |---|---|
 | `auto` | Echo when neither library is installed. Laravel AI when only `laravel/ai` is installed. Prism when only `prism-php/prism` is installed. If both are installed, the first message reports that this value must be set. |
 | `echo` | The echo responder, whether or not a library is installed. |
-| `laravel-ai` | Laravel AI. The provider defaults to `openrouter` and the model to `openai/gpt-4o-mini`. |
+| `laravel-ai` | Laravel AI. The provider defaults to `openrouter` and the model to `openai/gpt-4.1-mini`. |
 | `prism` | Prism. Same provider and model defaults. |
 
 The adapters were written against `laravel/ai` 1.4.0 and `prism-php/prism` 0.103.0. `determly/chat-laravel` does not require either library. Install the one the app should use. The workspace installs both so the adapters can be tested.

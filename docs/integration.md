@@ -111,7 +111,7 @@ The responder is selected by what is installed and by `DETERMLY_CHAT_AI`.
 |---|---|
 | `auto` | Echo if neither library is installed. Laravel AI if only `laravel/ai` is installed. Prism if only `prism-php/prism` is installed. An error if both are installed. |
 | `echo` | The echo responder. |
-| `laravel-ai` | Laravel AI. Provider defaults to `openrouter`. Model defaults to `openai/gpt-4o-mini`. |
+| `laravel-ai` | Laravel AI. Provider defaults to `openrouter`. Model defaults to `openai/gpt-4.1-mini`. |
 | `prism` | Prism. Same defaults. The key is `OPENROUTER_API_KEY`, not a chat config parameter. |
 
 The adapters were written against `laravel/ai` 1.4.0 and `prism-php/prism` 0.103.0. The published package does not require either library.
