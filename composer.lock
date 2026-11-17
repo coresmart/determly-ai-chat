@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "3aeb6ac94b1cb2a985193c3752f7a23e",
+    "content-hash": "65f86b28ba09be3f9041631133550de5",
     "packages": [
         {
             "name": "carbonphp/carbon-doctrine-types",
@@ -80,6 +80,69 @@
             ],
             "time": "2026-09-06T14:11:38+00:00",
             "published-time": "2026-09-06T14:15:00+00:00"
+        },
+        {
+            "name": "determly/chat",
+            "version": "0.1.0",
+            "dist": {
+                "type": "path",
+                "url": "packages/chat",
+                "reference": "f1220baad9d1723fc7888530672ddb9c936a45e3"
+            },
+            "require": {
+                "php": ">=8.3"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Determly\\Chat\\": "src/"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "description": "Persona SSE wire for Determly. Recipes and other chats speak this. No Laravel dependency.",
+            "transport-options": {
+                "relative": true
+            }
+        },
+        {
+            "name": "determly/chat-laravel",
+            "version": "0.1.0",
+            "dist": {
+                "type": "path",
+                "url": "packages/chat-laravel",
+                "reference": "572256f54c2152095d808b023ea6907b5baa890b"
+            },
+            "require": {
+                "determly/chat": "^0.1.0",
+                "illuminate/console": "^12.0 || ^13.0",
+                "illuminate/http": "^12.0 || ^13.0",
+                "illuminate/routing": "^12.0 || ^13.0",
+                "illuminate/support": "^12.0 || ^13.0",
+                "illuminate/view": "^12.0 || ^13.0",
+                "php": ">=8.3"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Determly\\Chat\\Laravel\\ChatServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Determly\\Chat\\Laravel\\": "src/"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "description": "Mounts the Persona chat widget on any Laravel stack and streams the Persona SSE wire.",
+            "transport-options": {
+                "relative": true
+            }
         },
         {
             "name": "doctrine/inflector",
@@ -6630,13 +6693,19 @@
         }
     ],
     "aliases": [],
-    "minimum-stability": "stable",
-    "stability-flags": {},
+    "minimum-stability": "dev",
+    "stability-flags": {
+        "determly/chat": 20,
+        "determly/chat-laravel": 20
+    },
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
         "php": ">=8.3"
     },
     "platform-dev": {},
+    "platform-overrides": {
+        "php": "8.3.99"
+    },
     "plugin-api-version": "2.11.0"
 }

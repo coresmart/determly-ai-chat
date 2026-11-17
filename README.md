@@ -1,24 +1,45 @@
-# Determly chat
+# determly-ai-chat
 
-Persona chat for Determly apps. One widget, one SSE endpoint, and whichever Laravel stack is already installed.
+Determly monorepo for [Persona](https://www.persona-chat.dev) chat. Each installable library lives in `packages/` with its own `composer.json`. The root project is a private Composer workspace that links those packages with a path repository, the same layout as `coresmart/tinyfish-php`.
 
-Repository: https://github.com/coresmart/determly-ai-chat
-
-| Path | Package | Role |
+| Package | Path | Role |
 |---|---|---|
-| Repository root | `determly/chat-laravel` | What a Laravel app requires. Includes the wire and the Laravel mount. |
-| `packages/chat` | `determly/chat` | Persona SSE wire only. No Laravel dependency. |
-| `packages/chat-laravel` | `determly/chat-laravel` | Dispatch route, HTML mount, stack report. |
+| [`determly/chat`](packages/chat) | `packages/chat` | Persona SSE wire. No Laravel dependency. Other chats speak this. |
+| [`determly/chat-laravel`](packages/chat-laravel) | `packages/chat-laravel` | Dispatch route and the one widget mount for Blade, Livewire, Inertia, and Filament. |
 
-Blade, Livewire, Inertia React, Inertia Vue, and Filament all load `@runtypelabs/persona` 4.39.0. The stack detector reports which app is installed. It does not swap the widget. Filament wins when Livewire is also present.
-
-Other chats use `Determly\Chat\Wire\Session` and the same Persona event stream. Recipes register tools on `Determly\Chat\ToolRegistry`. They do not ship a second transcript.
+`determly/chat-laravel` depends on `determly/chat`. Blade, Livewire, Inertia React, Inertia Vue, and Filament all load `@runtypelabs/persona` 4.39.0. The stack detector reports which app is installed. It does not swap the widget.
 
 Details: [docs/chat.md](docs/chat.md). Decisions: [DECISIONS.md](DECISIONS.md).
+
+## Development
+
+From this repository:
 
 ```bash
 composer install
 composer test
 ```
 
-PHP 8.3 or newer. MIT licensed.
+`composer test` runs every suite in `phpunit.xml.dist`.
+
+## Install a package in an application
+
+Composer reads only the root `composer.json` of a Git repository, so requiring this repository does not install `determly/chat` or `determly/chat-laravel`. Require the package directories.
+
+Laravel app, from a sibling checkout:
+
+```bash
+composer config repositories.chat '{"type":"path","url":"../determly-ai-chat/packages/chat","options":{"symlink":true}}'
+composer config repositories.chat-laravel '{"type":"path","url":"../determly-ai-chat/packages/chat-laravel","options":{"symlink":true}}'
+composer require determly/chat-laravel:@dev
+```
+
+`determly/chat` is pulled in by `determly/chat-laravel`. A non-Laravel caller requires `determly/chat` alone.
+
+## Add a package
+
+1. Create `packages/<name>/composer.json`. Set `name` to `determly/<name>`, set `version`, and point `autoload` at that package's `src/`.
+2. Require it from the root `composer.json` as `"determly/<name>": "*@dev"`.
+3. Map its test namespace in the root `autoload-dev`.
+4. Add a `<testsuite>` whose directory is `packages/<name>/tests`.
+5. Run `composer update` from the repository root.

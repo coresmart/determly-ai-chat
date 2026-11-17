@@ -2,9 +2,14 @@
 
 ## This repository
 
-https://github.com/coresmart/determly-ai-chat is the home of the Determly chat. It is MIT licensed, matching the `LICENSE` file.
+https://github.com/coresmart/determly-ai-chat is a Composer monorepo, MIT licensed, matching the `LICENSE` file. The root `composer.json` is a private workspace named `determly/ai-chat-workspace`. It is not an installable package.
 
-The root Composer package is `determly/chat-laravel`. Installing this Git repository gives a Laravel app the wire and the mount together. `packages/chat` stays a Laravel-free package so another chat can use the wire without Illuminate.
+Installable libraries live under `packages/`, each with its own `composer.json`:
+
+- `determly/chat` is the Persona wire and has no Laravel dependency.
+- `determly/chat-laravel` depends on `determly/chat` and mounts the widget.
+
+An app requires those packages by path. Requiring the GitHub repository itself does not install them, because Composer only reads the root `composer.json`.
 
 ## PHP 8.3
 

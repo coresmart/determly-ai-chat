@@ -11,25 +11,15 @@ Widget version: `@runtypelabs/persona` 4.39.0. Docs: https://www.persona-chat.de
 
 ## What an app installs
 
-This repository is the Composer package. From an app:
+This repository is a monorepo. Require the package, not the GitHub root. From a sibling checkout:
 
-```json
-{
-  "repositories": [
-    {
-      "type": "vcs",
-      "url": "https://github.com/coresmart/determly-ai-chat"
-    }
-  ],
-  "require": {
-    "determly/chat-laravel": "dev-main"
-  },
-  "minimum-stability": "dev",
-  "prefer-stable": true
-}
+```bash
+composer config repositories.chat '{"type":"path","url":"../determly-ai-chat/packages/chat","options":{"symlink":true}}'
+composer config repositories.chat-laravel '{"type":"path","url":"../determly-ai-chat/packages/chat-laravel","options":{"symlink":true}}'
+composer require determly/chat-laravel:@dev
 ```
 
-`determly/chat-laravel` includes the `Determly\Chat` wire, so a Laravel app does not require a second package. `packages/chat` is the same wire with no Laravel dependency, for a non-Laravel caller that path-requires that directory.
+`determly/chat-laravel` requires `determly/chat`. A non-Laravel caller requires only `determly/chat`.
 
 The service provider registers:
 

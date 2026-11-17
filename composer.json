@@ -1,43 +1,37 @@
 {
-    "name": "determly/chat-laravel",
-    "description": "Persona chat for any Laravel stack. Blade, Livewire, Inertia, and Filament share one widget and one SSE dispatch endpoint.",
-    "type": "library",
+    "name": "determly/ai-chat-workspace",
+    "description": "Composer workspace for the Determly chat monorepo. Installable packages live under packages/.",
+    "type": "project",
     "license": "MIT",
+    "private": true,
     "require": {
         "php": ">=8.3",
-        "illuminate/console": "^12.0 || ^13.0",
-        "illuminate/http": "^12.0 || ^13.0",
-        "illuminate/routing": "^12.0 || ^13.0",
-        "illuminate/support": "^12.0 || ^13.0",
-        "illuminate/view": "^12.0 || ^13.0"
+        "determly/chat": "*@dev",
+        "determly/chat-laravel": "*@dev"
     },
     "require-dev": {
         "phpunit/phpunit": "^11.5"
     },
-    "autoload": {
-        "psr-4": {
-            "Determly\\Chat\\": "packages/chat/src/",
-            "Determly\\Chat\\Laravel\\": "packages/chat-laravel/src/"
+    "repositories": [
+        {
+            "type": "path",
+            "url": "packages/*"
         }
-    },
+    ],
     "autoload-dev": {
         "psr-4": {
             "Determly\\Chat\\Tests\\": "packages/chat/tests/",
             "Determly\\Chat\\Laravel\\Tests\\": "packages/chat-laravel/tests/"
         }
     },
-    "extra": {
-        "laravel": {
-            "providers": [
-                "Determly\\Chat\\Laravel\\ChatServiceProvider"
-            ]
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "config": {
+        "sort-packages": true,
+        "platform": {
+            "php": "8.3.99"
         }
     },
-    "config": {
-        "sort-packages": true
-    },
-    "minimum-stability": "stable",
-    "prefer-stable": true,
     "scripts": {
         "test": "phpunit"
     }
