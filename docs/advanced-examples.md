@@ -53,7 +53,7 @@ The same shape in an app is one server tool that returns the rows, an artifact w
 
 ### Ask User Question and Suggested Replies
 
-[/examples/ask](../examples/gallery/resources/views/examples/ask.blade.php) calls `ask_user_question`. The widget advertises that tool because `DETERMLY_CHAT_ASK` is on, so the runner pauses with `step_await` and `awaitReason: local_tool_required`. The sheet posts `{apiUrl}/resume`. The next step is `suggest_replies`, which the runner emits through `Step::suggestions`.
+[/examples/ask](../examples/gallery/resources/views/examples/ask.blade.php) calls `ask_user_question`. The widget advertises that tool because `DETERMLY_CHAT_ASK` is on, so the runner pauses with `await` and `awaitReason: local_tool_required`. The sheet posts `{apiUrl}/resume`. The next step is `suggest_replies`, which the runner emits through `Step::suggestions`.
 
 `DETERMLY_CHAT_ASK=false` stops advertising the question tool. The gallery's starter chips are the ones on that page. The stock widget's starters stay "What can you do?" and "What tools are available?" when a page does not replace them.
 
@@ -118,7 +118,7 @@ Not in this gallery. The stock script does not pass a loading renderer. The laun
 
 ### Tool Approval
 
-[/examples/approval](../examples/gallery/resources/views/examples/approval.blade.php) calls `refund_order`. `requiresApproval()` is true, so the runner emits `agent_approval_start` and `step_await` with `awaitReason: approval_required`, and does not call `handle()` yet. The widget posts to `/examples/approval/dispatch/v1/agents/determly/approve` with `executionId`, `approvalId`, and `decision` (`approved` or `denied`). After approval, `handle()` records the refund and the page reloads `GET /examples/approval/refunds`.
+[/examples/approval](../examples/gallery/resources/views/examples/approval.blade.php) calls `refund_order`. `requiresApproval()` is true, so the runner emits `approval_start` and `await` with `awaitReason: approval_required`, and does not call `handle()` yet. The widget posts to `/examples/approval/dispatch/v1/agents/determly/approve` with `executionId`, `approvalId`, and `decision` (`approved` or `denied`). After approval, `handle()` records the refund and the page reloads `GET /examples/approval/refunds`.
 
 In an app the approve URL is `{dispatch}/v1/agents/{agent}/approve`. `remember: true` stores that tool name in the cache until `determly-chat:allowed-tools` is cleared. Denied skips `handle()`. The gallery uses the file cache so the paused execution survives the next PHP process.
 
@@ -189,7 +189,7 @@ Half fields sit two to a row. A submit posts a sentence to the chat through `sen
 
 [/examples/events](../examples/gallery/resources/views/examples/events.blade.php) appends persona handle events to a list on the page.
 
-The stock widget does not set `features.showEventStreamToggle`. Subscribe instead. The names and payloads are in [events.md](events.md). `assistant:complete` and `run:finished` are the ones a Laravel page uses to refresh. `approval:requested` and `approval:resolved` match the approval tool. `stream:paused` is a dropped stream, which is separate from `step_await`.
+The stock widget does not set `features.showEventStreamToggle`. Subscribe instead. The names and payloads are in [events.md](events.md). `assistant:complete` and `run:finished` are the ones a Laravel page uses to refresh. `approval:requested` and `approval:resolved` match the approval tool. `stream:paused` is a dropped stream, which is separate from `await`.
 
 ### Shadow-aware Page Context
 

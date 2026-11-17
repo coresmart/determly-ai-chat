@@ -52,8 +52,8 @@ final class GalleryResponderTest extends TestCase
             'messages' => [['role' => 'user', 'content' => 'Refund order 1001']],
         ], $tools, $store);
 
-        $this->assertContains('agent_approval_start', $this->names($paused));
-        $await = $this->event($paused, 'step_await');
+        $this->assertContains('approval_start', $this->names($paused));
+        $await = $this->event($paused, 'await');
         $this->assertSame('approval_required', $await->data['awaitReason']);
         $this->assertSame('refund_order', $await->data['toolName']);
         $this->assertNotContains('execution_complete', $this->names($paused));
@@ -81,7 +81,7 @@ final class GalleryResponderTest extends TestCase
             ]],
         ], store: $store);
 
-        $await = $this->event($paused, 'step_await');
+        $await = $this->event($paused, 'await');
         $this->assertSame('local_tool_required', $await->data['awaitReason']);
         $this->assertSame('ask_user_question', $await->data['toolName']);
         $this->assertSame('webmcp', $await->data['origin']);
@@ -118,6 +118,54 @@ final class GalleryResponderTest extends TestCase
         $this->assertFalse($this->event($missing, 'tool_complete')->data['result']['found']);
         $this->assertSame('Order 1234 is not in the table.', trim($this->text($missing)));
         $this->assertStringNotContainsString('1001', $this->text($missing));
+    }
+
+    public function test_add_to_cart_pauses_so_the_page_can_run_it(): void
+    {
+        $store = new MemoryExecutionStore;
+        $paused = $this->play('actions', [
+            'messages' => [['role' => 'user', 'content' => 'Add the trail shoe to the cart']],
+            'clientTools' => [[
+                'name' => 'add_to_cart',
+                'origin' => 'webmcp',
+            ]],
+        ], store: $store);
+
+        $await = $this->event($paused, 'await');
+        $this->assertSame('local_tool_required', $await->data['awaitReason']);
+        $this->assertSame('add_to_cart', $await->data['toolName']);
+        $this->assertSame('webmcp', $await->data['origin']);
+        $this->assertSame('SHOE-014', $await->data['parameters']['sku']);
+        $this->assertSame('Trail shoe', $await->data['parameters']['title']);
+        $this->assertNotContains('execution_complete', $this->names($paused));
+        $this->assertNotContains('tool_complete', $this->names($paused));
+
+        $added = $this->play('actions', [], store: $store, executionId: (string) $await->data['executionId'], handler: function (Runner $runner, Emitter $emit) use ($await): void {
+            $runner->resume((string) $await->data['executionId'], [
+                (string) $await->data['toolCallId'] => [
+                    'content' => [['type' => 'text', 'text' => 'Trail shoe added to the cart.']],
+                ],
+            ], $emit);
+        });
+        $this->assertStringContainsString('The cart on the page now includes the trail shoe.', $this->text($added));
+
+        $other = new MemoryExecutionStore;
+        $pausedAgain = $this->play('actions', [
+            'messages' => [['role' => 'user', 'content' => 'Add the trail shoe to the cart']],
+            'clientTools' => [[
+                'name' => 'add_to_cart',
+                'origin' => 'webmcp',
+            ]],
+        ], store: $other);
+        $awaitAgain = $this->event($pausedAgain, 'await');
+        $unchanged = $this->play('actions', [], store: $other, executionId: (string) $awaitAgain->data['executionId'], handler: function (Runner $runner, Emitter $emit) use ($awaitAgain): void {
+            $runner->resume((string) $awaitAgain->data['executionId'], [
+                (string) $awaitAgain->data['toolCallId'] => [
+                    'content' => [['type' => 'text', 'text' => 'The visitor cancelled.']],
+                ],
+            ], $emit);
+        });
+        $this->assertSame('The cart was not changed.', trim($this->text($unchanged)));
     }
 
     public function test_component_reply_is_only_json(): void

@@ -196,7 +196,7 @@ The worked copy of this tool, plus a Prism env file and a Laravel AI env file, i
 2. The selected library streams one step: text, reasoning, or a tool call.
 3. The runner executes a server tool, or pauses for approval, or pauses for a page tool.
 4. After a server tool, the runner calls the library again with the tool result in the transcript. Each library is limited to one model step per call, so it does not execute the tool a second time.
-5. The stream ends with `execution_complete`, or it stops on `step_await` until `/resume` or the approval URL.
+5. The stream ends with `execution_complete`, or it stops on `await` until `/resume` or the approval URL.
 
 Paused executions are stored in the default cache store for one hour, under `determly-chat:execution:{id}`. Use a store that survives the next HTTP request. The `array` cache driver does not. `file`, `database`, or `redis` does.
 
