@@ -8,9 +8,13 @@ use Determly\Chat\Dispatch\Turn;
 use Determly\Chat\Examples\LookupOrder;
 use Determly\Chat\InvalidChat;
 use Determly\Chat\Laravel\Ai\AiChoice;
+use Determly\Chat\Gallery\Tools\LookupOrder as GalleryLookupOrder;
+use Determly\Chat\Gallery\Tools\QueryOrders;
 use Determly\Chat\Laravel\Ai\LaravelChatAgent;
 use Determly\Chat\Laravel\Ai\LaravelAiResponder;
 use Determly\Chat\Laravel\Ai\PrismResponder;
+use Determly\Chat\Laravel\Ai\ToolEquivalents;
+use Determly\Chat\Laravel\Ai\ToolParameters;
 use Determly\Chat\Laravel\Ai\Transcript;
 use Determly\Chat\Run\MemoryExecutionStore;
 use Determly\Chat\Run\Runner;
@@ -24,7 +28,9 @@ use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Facade;
 use Laravel\Ai\AiServiceProvider;
 use Laravel\Ai\Attributes\MaxSteps;
+use Illuminate\JsonSchema\JsonSchemaTypeFactory;
 use Laravel\Ai\Responses\Data\ToolCall as LaravelToolCall;
+use Laravel\Ai\Tools\Request as LaravelToolRequest;
 use PHPUnit\Framework\TestCase;
 use Prism\Prism\Enums\FinishReason;
 use Prism\Prism\Facades\Prism;
@@ -214,6 +220,34 @@ final class AiTest extends TestCase
         $prism = $this->play(new PrismResponder($tools, 'Be brief.', 'openai', 'gpt-test'), $tools);
         $this->assertContains('lookup_order', $this->toolNames($prism));
         $this->assertSame('Order 1001 is shipped.', $this->text($prism));
+    }
+
+    public function test_laravel_ai_and_prism_equivalents_run_the_same_tool(): void
+    {
+        $order = new GalleryLookupOrder;
+        $laravel = ToolEquivalents::laravel($order);
+        $schema = $laravel->schema(new JsonSchemaTypeFactory);
+
+        $this->assertSame('lookup_order', $laravel->name());
+        $this->assertSame('Look up one order by id and return the customer, status, and total.', (string) $laravel->description());
+        $this->assertArrayHasKey('order_id', $schema);
+        $this->assertSame(
+            '{"found":true,"id":"1001","customer":"Avery Chen","status":"shipped","total":"$86.00"}',
+            (string) $laravel->handle(new LaravelToolRequest(['order_id' => '1001'])),
+        );
+
+        $query = new QueryOrders;
+        $prism = ToolEquivalents::prism($query);
+        $parameters = $prism->parametersAsArray();
+
+        $this->assertSame('query_orders', $prism->name());
+        $this->assertSame(['all', 'open', 'paid', 'shipped'], $parameters['status']['enum']);
+        $decoded = json_decode((string) $prism->handle(status: 'paid'), true);
+        $this->assertSame('paid', $decoded['status']);
+        $this->assertSame('1003', $decoded['rows'][0]['id']);
+
+        $advertised = ToolParameters::prism($order);
+        $this->assertSame('', (string) $advertised->handle(order_id: '1001'));
     }
 
     public function test_the_support_chat_page_tool_keeps_its_schema_and_origin(): void
