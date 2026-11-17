@@ -39,3 +39,11 @@ The runner keeps tool execution, approval, and resume. The library proposes the 
 ## Page tools and the window handle
 
 The injected widget sets `windowKey` to `determlyChat` and `webmcp.enabled` to true. `DETERMINLY_CHAT_WINDOW_KEY` and `DETERMINLY_CHAT_WEBMCP` change those. Persona 4.39.0 snapshots `document.modelContext` only when WebMCP is enabled, and it runs a page tool when `step_await` carries `origin: webmcp` or a `webmcp:` tool name. The dispatch parser keeps `origin`, `description`, and `parametersSchema` from each client tool object. A read-only page tool (`annotations.readOnlyHint`) is auto-approved by the injected script. Other page tools still ask. The widget does not call Livewire, Filament, or Inertia. The page refreshes from `assistant:complete` or from the page tool. The event names are the 4.39.0 controller map, documented in `docs/events.md`.
+
+## Components, artifacts, and layout
+
+Persona 4.39.0 renders a component when a message's raw JSON has a `component` string. Determly registers `DynamicForm`, `ProductCard`, and `Notice`, and installs a stream parser that leaves plain text alone and extracts `text` from that JSON. The same names can be opened in the artifact pane.
+
+`emit_artifact_markdown` and `emit_artifact_component` are reserved tool names. The runner emits `artifact_start`, `artifact_delta` or `artifact_update`, and `artifact_complete`. It does not emit `tool_start` for them, because the widget hides those tool names and the pane is the visible result. Props for a component artifact are a JSON string so both Laravel AI and Prism can pass them.
+
+`features.askUserQuestion.expose` and `suggestions.followUps.expose` are on, so the widget advertises `ask_user_question` and `suggest_replies`. The mount is `floating` unless `DETERMINLY_CHAT_MOUNT` is `docked` or `fullscreen`. A docked widget cannot target `body` or `html`. Voice and composer attachments are not part of this package.

@@ -67,6 +67,16 @@ A page tool is the other path. `resources/js/determly-chat.js` registers `refres
 
 Load the script from your layout. The widget is already injected before `</body>` unless `DETERMINLY_CHAT_INJECT=false`.
 
+## A form inside the reply
+
+The widget already registers `DynamicForm`, `ProductCard`, and `Notice`. Ask the model for a contact form and it can reply with only this JSON:
+
+```json
+{"text":"Tell me how to reach you.","component":"DynamicForm","props":{"title":"Contact","fields":[{"label":"Email","type":"email","required":true}],"submit_text":"Send"}}
+```
+
+Plain answers stay plain text. A longer note uses `emit_artifact_markdown` and opens the side pane. See [docs/components.md](../../docs/components.md).
+
 ## Refresh by stack
 
 `assistant:complete` is the same event on every stack. What you call from it is not.

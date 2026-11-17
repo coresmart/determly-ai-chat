@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Determly\Chat\Laravel;
 
+use Determly\Chat\InvalidChat;
+
 /**
  * The same Persona widget for every Laravel stack.
  * Version pin matches the wire behavior in determly/chat.
@@ -20,20 +22,58 @@ final class Widget
         string $subtitle = 'Ask a question',
         string $windowKey = 'determlyChat',
         bool $webmcp = true,
+        string $target = 'body',
+        string $mount = 'floating',
+        string $dockSide = 'right',
+        string $dockWidth = '420px',
+        bool $artifacts = true,
+        bool $askUser = true,
     ): string {
+        if (! in_array($mount, ['floating', 'docked', 'fullscreen'], true)) {
+            throw new InvalidChat('Chat mount must be floating, docked, or fullscreen.');
+        }
+        if (! in_array($dockSide, ['left', 'right'], true)) {
+            throw new InvalidChat('Chat dock side must be left or right.');
+        }
+
+        $launcher = [
+            'enabled' => $mount !== 'fullscreen',
+            'title' => $title,
+            'subtitle' => $subtitle,
+        ];
+        if ($mount === 'docked') {
+            $launcher['mountMode'] = 'docked';
+            $launcher['dock'] = ['side' => $dockSide, 'width' => $dockWidth];
+        }
+        if ($mount === 'fullscreen') {
+            $launcher['fullHeight'] = true;
+        }
+
         $config = [
-            'target' => 'body',
+            'target' => $target,
             'apiUrl' => $apiUrl,
             'config' => [
                 'apiUrl' => $apiUrl,
-                'launcher' => [
-                    'enabled' => true,
-                    'title' => $title,
-                    'subtitle' => $subtitle,
-                ],
+                'launcher' => $launcher,
                 'suggestions' => [
                     'starters' => [
                         'items' => ['What can you do?', 'What tools are available?'],
+                    ],
+                    'followUps' => [
+                        'enabled' => true,
+                        'expose' => true,
+                    ],
+                ],
+                'features' => [
+                    'showReasoning' => true,
+                    'showToolCalls' => true,
+                    'artifacts' => [
+                        'enabled' => $artifacts,
+                        'allowedTypes' => ['markdown', 'component'],
+                    ],
+                    'askUserQuestion' => [
+                        'enabled' => $askUser,
+                        'expose' => $askUser,
                     ],
                 ],
                 'persistState' => true,
@@ -45,10 +85,15 @@ final class Widget
         if ($webmcp) {
             $config['config']['webmcp'] = ['enabled' => true];
         }
+
         $json = json_encode(
             $config,
             JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_THROW_ON_ERROR,
         );
+        $components = file_get_contents(__DIR__.'/../resources/js/components.js');
+        if ($components === false) {
+            throw new InvalidChat('Chat components script is missing.');
+        }
         $approve = $webmcp ? <<<'JS'
             window.siteAgentConfig.config.webmcp.autoApprove = function (info) {
               return !!(info.annotations && info.annotations.readOnlyHint === true);
@@ -59,7 +104,10 @@ final class Widget
         return <<<HTML
             <!-- determly-chat-widget -->
             <script>
+            {$components}
             window.siteAgentConfig = {$json};
+            window.siteAgentConfig.config.components = window.DetermlyChatComponents;
+            window.siteAgentConfig.config.streamParser = window.DetermlyChatStreamParser;
             window.siteAgentConfig.config.getHeaders = function () {
               var token = document.querySelector('meta[name="csrf-token"]');
               var headers = { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'text/event-stream' };

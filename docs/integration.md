@@ -117,3 +117,5 @@ The adapters were written against `laravel/ai` 1.4.0 and `prism-php/prism` 0.103
 Register each server tool once on `Determly\Chat\ToolRegistry`. Both libraries read that registry. The runner executes the tool. Each library is limited to one model step so it does not execute the tool as well. After the tool, the runner calls the model again.
 
 The support chat example is the concrete pair: one `lookup_order` tool, a Prism env file, a Laravel AI env file, and `resources/js/determly-chat.js` for the refresh. See [examples/support-chat](../examples/support-chat).
+
+Components, the artifact pane, questions, follow-up chips, and the floating, docked, and fullscreen mounts are in [components.md](components.md).

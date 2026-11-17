@@ -36,6 +36,10 @@ A dispatch, a resume, and an approval decision are each their own HTTP response.
 | `agent_approval_complete` | The decision arrived | `approvalId`, `decision` (`approved` or `denied`), `executionId` |
 | `step_await` | The turn is paused | `awaitReason`, `executionId`, plus the fields below |
 | `turn_complete` | The assistant turn ends | `id`, `role`, `iteration`, `stopReason` (`end_turn`), `completedAt` |
+| `artifact_start` | An artifact pane opens | `id`, `artifactType` (`markdown` or `component`), `title`, and `component` when the type is `component` |
+| `artifact_delta` | Markdown streams into the pane | `id`, `delta` |
+| `artifact_update` | Component props for the pane | `id`, `props`, `component` |
+| `artifact_complete` | The artifact finished | `id` |
 | `execution_complete` | The response succeeded | `kind` (`agent`), `success` (`true`), `completedAt` |
 | `execution_error` | The response failed | `kind` (`agent`), `error.code` (`adapter_error`), `error.message` |
 

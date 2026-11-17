@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Determly\Chat\Laravel;
 
 use Determly\Chat\Agent;
+use Determly\Chat\ComponentArtifactTool;
+use Determly\Chat\MarkdownArtifactTool;
 use Determly\Chat\EchoAgent;
 use Determly\Chat\InvalidChat;
 use Determly\Chat\Laravel\Ai\AiChoice;
@@ -63,6 +65,13 @@ final class ChatServiceProvider extends ServiceProvider
 
         if ($this->app->runningInConsole()) {
             $this->commands([ChatStatusCommand::class]);
+        }
+
+        $tools = $this->app->make(ToolRegistry::class);
+        foreach ([new MarkdownArtifactTool, new ComponentArtifactTool] as $tool) {
+            if (! $tools->has($tool->name())) {
+                $tools->register($tool, 'determly');
+            }
         }
 
         Blade::component('determly-chat::widget', 'determly-chat');

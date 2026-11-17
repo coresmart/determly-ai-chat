@@ -82,6 +82,55 @@ final class Emitter
         ]);
     }
 
+    public function artifactStart(string $id, string $artifactType, string $title, ?string $component = null): void
+    {
+        if ($this->finished) {
+            return;
+        }
+        $this->closeTextBlock();
+        $this->openTurn();
+        $fields = [
+            'id' => $id,
+            'artifactType' => $artifactType,
+            'title' => $title,
+        ];
+        if (is_string($component) && $component !== '') {
+            $fields['component'] = $component;
+        }
+        $this->send('artifact_start', $fields);
+    }
+
+    public function artifactDelta(string $id, string $delta): void
+    {
+        if ($this->finished) {
+            return;
+        }
+        $this->send('artifact_delta', ['id' => $id, 'delta' => $delta]);
+    }
+
+    /**
+     * @param  array<string, mixed>  $props
+     */
+    public function artifactUpdate(string $id, array $props, ?string $component = null): void
+    {
+        if ($this->finished) {
+            return;
+        }
+        $fields = ['id' => $id, 'props' => $props === [] ? new \stdClass : $props];
+        if (is_string($component) && $component !== '') {
+            $fields['component'] = $component;
+        }
+        $this->send('artifact_update', $fields);
+    }
+
+    public function artifactComplete(string $id): void
+    {
+        if ($this->finished) {
+            return;
+        }
+        $this->send('artifact_complete', ['id' => $id]);
+    }
+
     public function toolComplete(string $toolCallId, mixed $result, bool $success): void
     {
         if ($this->finished) {

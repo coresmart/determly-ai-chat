@@ -30,6 +30,17 @@ final class ChatStatusCommand extends Command
         $windowKey = (string) config('determly-chat.window_key', 'determlyChat');
         $this->line('Window: '.($windowKey !== '' ? 'window.'.$windowKey : 'persona:chat-ready'));
         $this->line('WebMCP: '.(config('determly-chat.webmcp') ? 'on' : 'off'));
+        $mount = (string) config('determly-chat.mount', 'floating');
+        $target = (string) config('determly-chat.target', 'body');
+        $this->line('Mount: '.$mount.' target '.$target);
+        if ($mount === 'docked' && in_array($target, ['body', 'html'], true)) {
+            $this->error('A docked chat cannot target body or html. Set DETERMINLY_CHAT_TARGET to a page region.');
+
+            return self::FAILURE;
+        }
+        $this->line('Artifacts: '.(config('determly-chat.artifacts') ? 'on' : 'off'));
+        $this->line('Ask user: '.(config('determly-chat.ask_user') ? 'on' : 'off'));
+        $this->line('Components: DynamicForm, ProductCard, Notice');
         if ($this->reportAi() !== self::SUCCESS) {
             return self::FAILURE;
         }

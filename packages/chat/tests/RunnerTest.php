@@ -193,6 +193,43 @@ final class RunnerTest extends TestCase
         $this->assertNotContains('execution_complete', $this->names($frames));
     }
 
+    public function test_artifact_tools_stream_persona_artifact_frames(): void
+    {
+        $frames = $this->play(function (Runner $runner, Emitter $emit): void {
+            $runner->dispatch(Turn::fromArray([
+                'messages' => [['role' => 'user', 'content' => 'show the note']],
+            ]), $emit);
+        }, new ScriptResponder([
+            [Step::tool('emit_artifact_markdown', ['title' => 'Note', 'content' => 'Hello'])],
+            [Step::text('Shown.')],
+        ]));
+
+        $start = $this->event($frames, 'artifact_start');
+        $this->assertSame('markdown', $start->data['artifactType']);
+        $this->assertSame('Note', $start->data['title']);
+        $this->assertSame('Hello', $this->event($frames, 'artifact_delta')->data['delta']);
+        $this->assertSame($start->data['id'], $this->event($frames, 'artifact_complete')->data['id']);
+        $this->assertNotContains('tool_start', $this->names($frames));
+        $this->assertSame('Shown.', $this->event($frames, 'text_delta')->data['delta']);
+
+        $component = $this->play(function (Runner $runner, Emitter $emit): void {
+            $runner->dispatch(Turn::fromArray([
+                'messages' => [['role' => 'user', 'content' => 'show the card']],
+            ]), $emit);
+        }, new ScriptResponder([
+            [Step::tool('emit_artifact_component', [
+                'title' => 'Card',
+                'component' => 'ProductCard',
+                'props' => '{"title":"Trail shoe","price":"$129"}',
+            ])],
+        ]));
+
+        $panel = $this->event($component, 'artifact_start');
+        $this->assertSame('component', $panel->data['artifactType']);
+        $this->assertSame('ProductCard', $panel->data['component']);
+        $this->assertSame('Trail shoe', $this->event($component, 'artifact_update')->data['props']['title']);
+    }
+
     public function test_reasoning_closes_before_the_answer(): void
     {
         $frames = $this->play(function (Runner $runner, Emitter $emit): void {
