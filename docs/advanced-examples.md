@@ -1,159 +1,150 @@
 # Advanced examples in Laravel
 
-[Persona's advanced gallery](https://www.persona-chat.dev/advanced.html) is a set of demos on top of `@runtypelabs/persona` 4.39.0. Determly does not ship a second copy of those demos. One Laravel widget plays the same roles: a floating launcher, a dispatch route, and the hooks below.
+[Persona's advanced gallery](https://www.persona-chat.dev/advanced.html) is a set of demos on top of `@runtypelabs/persona` 4.39.0. The runnable copy in this repo is the Laravel app at [examples/gallery](../examples/gallery). Open it in the browser. Each page mounts the Persona widget and dispatches to its own route. The scripted responder does not call a model.
 
-The gallery has three groups. Agent Loop is in the catalog and hidden from the gallery. It is the turn our runner already executes.
+From the repository root, after `composer install`:
 
-Install and the per-stack refresh calls are in [installation.md](installation.md). Component props are in [components.md](components.md). Frames and handle events are in [events.md](events.md).
+```bash
+php -S 127.0.0.1:8080 -t examples/gallery/public examples/gallery/public/index.php
+```
 
-| Example | Persona group | In this package |
+The last argument is the router. Without it, the built-in server only serves files that exist under `public/` and `/examples/...` 404s. Then open [http://127.0.0.1:8080/](http://127.0.0.1:8080/).
+
+`examples/gallery/.env` sets `DETERMLY_CHAT_AI=echo`, `DETERMLY_CHAT_INJECT=false`, `CACHE_STORE=file`, `SESSION_DRIVER=file`, and a local `APP_KEY`. The gallery also forces echo and the file cache in its service provider. Both `laravel/ai` and `prism-php/prism` are installed in this workspace, so `auto` would error. Echo mode needs no API key. The file cache is required because PHP's built-in server is a new process per request; the array cache would drop an approval or a resume. `storage/framework/cache` must be writable. The app has no `vendor/` of its own. `public/index.php` points `COMPOSER_VENDOR_DIR` at the monorepo `vendor/` and loads that autoload file.
+
+How to open each page is in [examples/gallery/README.md](../examples/gallery/README.md). Install and the per-stack refresh calls are in [installation.md](installation.md). Component props are in [components.md](components.md). Frames and handle events are in [events.md](events.md).
+
+Voice input and output, bring-your-own voice, server TTS, text-reveal animations, custom loader graphics, and file attachments are not pages in this gallery. The home page names them once.
+
+| Example | Persona group | Gallery |
 |---|---|---|
-| [Talk to Your Data](https://www.persona-chat.dev/analytics-agent-demo.html) | Generative UX | You build it from a server tool plus an artifact. |
-| [Ask User Question and Suggested Replies](https://www.persona-chat.dev/ask-user-question-demo.html) | Generative UX | On. `DETERMLY_CHAT_ASK` and follow-up chips. |
-| [Artifact Sidebar](https://www.persona-chat.dev/artifact-demo.html) | Generative UX | On. `emit_artifact_markdown` and `emit_artifact_component`. |
-| [Dynamic Components](https://www.persona-chat.dev/dynamic-components.html) | Generative UX | On. `DynamicForm`, `ProductCard`, and `Notice`. |
-| [Voice Input and Output](https://www.persona-chat.dev/voice-integration-demo.html) | Generative UX | Not enabled. Needs a speech service. |
-| [Bring-Your-Own Voice](https://www.persona-chat.dev/custom-voice-provider-demo.html) | Generative UX | Not enabled. Needs a speech service. |
-| [Server TTS](https://www.persona-chat.dev/server-tts-demo.html) | Generative UX | Not enabled. Needs a speech service. |
-| [Agent Loop](https://www.persona-chat.dev/agent-demo.html) | Generative UX, hidden in the gallery | On. The dispatch runner. |
-| [Tool and Reasoning Loaders](https://www.persona-chat.dev/tool-loading-demo.html) | Patterns | Reasoning and tool rows are on. The loader graphic is Persona's default. |
-| [Text Reveal Effects](https://www.persona-chat.dev/stream-animations-demo.html) | Patterns | Not enabled. Text arrives as `text_delta` with no reveal animation. |
-| [Streaming Markdown Tables](https://www.persona-chat.dev/streaming-table-demo.html) | Patterns | On, through the 4.39.0 markdown renderer the installer attaches. |
-| [Replace the Loader](https://www.persona-chat.dev/custom-loading-indicator.html) | Patterns | Not enabled. The stock script keeps Persona's loader. |
-| [Tool Approval](https://www.persona-chat.dev/approval-demo.html) | Patterns | On. `requiresApproval()` on a tool. |
-| [Tool Action Handlers](https://www.persona-chat.dev/action-middleware.html) | Patterns | Use a page tool. The package does not install an action parser. |
-| [File Attachments](https://www.persona-chat.dev/attachments-demo.html) | Patterns | Not enabled. |
-| [Feedback Events](https://www.persona-chat.dev/feedback-integration-demo.html) | Patterns | Listen on the handle and post to your own route. |
-| [Programmatic Input Focus](https://www.persona-chat.dev/focus-input-demo.html) | Patterns | The handle supports it. The stock config leaves auto focus off. |
-| [Form Field Reference](https://www.persona-chat.dev/dynamic-form-fields.html) | Reference | `DynamicForm` covers the listed field types, width, required, and helper text. It does not mask input. |
-| [Event Inspector](https://www.persona-chat.dev/event-stream-testing.html) | Reference | Subscribe on `persona:chat-ready`. The stock widget does not turn on Persona's inspector toggle. |
-| [Shadow-aware Page Context](https://www.persona-chat.dev/smart-dom-reader-demo.html) | Reference | Not enabled. Read the page from a page tool you write. |
-| [Scroll Engineering](https://www.persona-chat.dev/scroll-engineering.html) | Reference | Persona's default scroll. The package does not set `features.scrollBehavior`. |
+| [Talk to Your Data](https://www.persona-chat.dev/analytics-agent-demo.html) | Generative UX | [/examples/data](../examples/gallery/resources/views/examples/data.blade.php) |
+| [Ask User Question and Suggested Replies](https://www.persona-chat.dev/ask-user-question-demo.html) | Generative UX | [/examples/ask](../examples/gallery/resources/views/examples/ask.blade.php) |
+| [Artifact Sidebar](https://www.persona-chat.dev/artifact-demo.html) | Generative UX | [/examples/artifacts](../examples/gallery/resources/views/examples/artifacts.blade.php) |
+| [Dynamic Components](https://www.persona-chat.dev/dynamic-components.html) | Generative UX | [/examples/components](../examples/gallery/resources/views/examples/components.blade.php) |
+| [Voice Input and Output](https://www.persona-chat.dev/voice-integration-demo.html) | Generative UX | Not in this gallery. Needs a speech service. |
+| [Bring-Your-Own Voice](https://www.persona-chat.dev/custom-voice-provider-demo.html) | Generative UX | Not in this gallery. Needs a speech service. |
+| [Server TTS](https://www.persona-chat.dev/server-tts-demo.html) | Generative UX | Not in this gallery. Needs a speech service. |
+| [Agent Loop](https://www.persona-chat.dev/agent-demo.html) | Generative UX, hidden in Persona's gallery | [/examples/agent](../examples/gallery/resources/views/examples/agent.blade.php) |
+| [Tool and Reasoning Loaders](https://www.persona-chat.dev/tool-loading-demo.html) | Patterns | [/examples/loaders](../examples/gallery/resources/views/examples/loaders.blade.php) |
+| [Text Reveal Effects](https://www.persona-chat.dev/stream-animations-demo.html) | Patterns | Not in this gallery. Text arrives as `text_delta` with no reveal animation. |
+| [Streaming Markdown Tables](https://www.persona-chat.dev/streaming-table-demo.html) | Patterns | [/examples/tables](../examples/gallery/resources/views/examples/tables.blade.php) |
+| [Replace the Loader](https://www.persona-chat.dev/custom-loading-indicator.html) | Patterns | Not in this gallery. The stock script keeps Persona's loader. |
+| [Tool Approval](https://www.persona-chat.dev/approval-demo.html) | Patterns | [/examples/approval](../examples/gallery/resources/views/examples/approval.blade.php) |
+| [Tool Action Handlers](https://www.persona-chat.dev/action-middleware.html) | Patterns | [/examples/actions](../examples/gallery/resources/views/examples/actions.blade.php) |
+| [File Attachments](https://www.persona-chat.dev/attachments-demo.html) | Patterns | Not in this gallery. |
+| [Feedback Events](https://www.persona-chat.dev/feedback-integration-demo.html) | Patterns | [/examples/feedback](../examples/gallery/resources/views/examples/feedback.blade.php) |
+| [Programmatic Input Focus](https://www.persona-chat.dev/focus-input-demo.html) | Patterns | [/examples/focus](../examples/gallery/resources/views/examples/focus.blade.php) |
+| [Form Field Reference](https://www.persona-chat.dev/dynamic-form-fields.html) | Reference | [/examples/forms](../examples/gallery/resources/views/examples/forms.blade.php) |
+| [Event Inspector](https://www.persona-chat.dev/event-stream-testing.html) | Reference | [/examples/events](../examples/gallery/resources/views/examples/events.blade.php) |
+| [Shadow-aware Page Context](https://www.persona-chat.dev/smart-dom-reader-demo.html) | Reference | [/examples/shadow](../examples/gallery/resources/views/examples/shadow.blade.php) |
+| [Scroll Engineering](https://www.persona-chat.dev/scroll-engineering.html) | Reference | Persona's default scroll. Not a separate gallery page. |
 
 ## Generative UX
 
 ### Talk to Your Data
 
-The demo keeps a table in the browser, exposes it as WebMCP tools, and draws charts in the artifact pane.
+[/examples/data](../examples/gallery/resources/views/examples/data.blade.php) shows an orders table. The starter calls the server tool `query_orders`, then `emit_artifact_markdown` with a markdown table of those rows. `filter_orders` is a page tool with `annotations.readOnlyHint`, so the confirm bubble is skipped. Its `execute` loads `GET /examples/data/table` and replaces the table.
 
-In Laravel the rows live in the database. Register one tool that runs the query and returns the rows. Ask the model to call `emit_artifact_markdown` with a markdown table when the answer is long enough to leave the thread. A filter that must change the page the visitor is looking at is a page tool named for that screen, such as `refresh_orders`, with `refreshOrders()` from [installation.md](installation.md). The package does not include a SQL engine or a chart component.
+The same shape in an app is one server tool that returns the rows, an artifact when the answer should leave the thread, and a page tool when the visitor's screen has to change. The package does not include a SQL engine or a chart component. [installation.md](installation.md) shows the Livewire, Filament, Inertia, and Blade refresh calls.
 
 ### Ask User Question and Suggested Replies
 
-The demo has two tools. `ask_user_question` blocks until the visitor picks. `suggest_replies` shows chips and continues.
+[/examples/ask](../examples/gallery/resources/views/examples/ask.blade.php) calls `ask_user_question`. The widget advertises that tool because `DETERMLY_CHAT_ASK` is on, so the runner pauses with `step_await` and `awaitReason: local_tool_required`. The sheet posts `{apiUrl}/resume`. The next step is `suggest_replies`, which the runner emits through `Step::suggestions`.
 
-Both are advertised by the injected widget. `DETERMLY_CHAT_ASK=false` stops the question tool. Follow-up chips stay available. Starter chips are "What can you do?" and "What tools are available?". The model instructions already mention both tools. Echo mode emits two suggestions on its own and does not call a model.
-
-The question pause is `step_await` with `awaitReason: local_tool_required`. The widget shows the sheet and posts `/determly/chat/dispatch/resume`.
+`DETERMLY_CHAT_ASK=false` stops advertising the question tool. The gallery's starter chips are the ones on that page. The stock widget's starters stay "What can you do?" and "What tools are available?" when a page does not replace them.
 
 ### Artifact Sidebar
 
-The demo streams markdown and registered components into a resizable pane. On a narrow screen the pane is a drawer.
-
-`DETERMLY_CHAT_ARTIFACTS` defaults to on, for `markdown` and `component`. The model calls:
+[/examples/artifacts](../examples/gallery/resources/views/examples/artifacts.blade.php) calls both artifact tools in one turn:
 
 - `emit_artifact_markdown` with `title` and `content`
-- `emit_artifact_component` with `title`, `component`, and `props` as a JSON object string
+- `emit_artifact_component` with `title`, `component` `ProductCard`, and `props` as a JSON object string
 
-The runner emits `artifact_start`, then `artifact_delta` or `artifact_update`, then `artifact_complete`. `DynamicForm`, `ProductCard`, and `Notice` are valid `component` names. A component the page added on `window.DetermlyChatComponents` before the widget script is valid too.
+`DETERMLY_CHAT_ARTIFACTS` defaults to on, for `markdown` and `component`. The runner emits `artifact_start`, then `artifact_delta` or `artifact_update`, then `artifact_complete`. `DynamicForm`, `ProductCard`, and `Notice` are valid `component` names. A component the page added on `window.DetermlyChatComponents` before the widget script is valid too. On a narrow screen the pane is a drawer.
 
 ### Dynamic Components
 
-The demo renders a component from JSON in the assistant message.
-
-Reply with plain text, or with one JSON object and no other text:
+[/examples/components](../examples/gallery/resources/views/examples/components.blade.php) replies with only a JSON object. One starter for each of `DynamicForm`, `ProductCard`, and `Notice`.
 
 ```json
 {"text":"Tell me how to reach you.","component":"DynamicForm","props":{"title":"Contact","submit_text":"Send","fields":[{"label":"Email","type":"email","required":true}]}}
 ```
 
-`component` is `DynamicForm`, `ProductCard`, or `Notice`. The stream parser shows `text` and mounts the component. A form submit and the product button call `sendMessage` on `window.determlyChat`. Props are listed in [components.md](components.md).
-
-Add another component by assigning it on `window.DetermlyChatComponents` in a script that runs before the injected widget. The installer copies that object onto `config.components`.
+The stream parser shows `text` and mounts the component. A form submit and the product button call `sendMessage` on `window.determlyChat`. Props are listed in [components.md](components.md).
 
 ### Voice, bring-your-own voice, and server TTS
 
-Those three demos attach a speech engine to the composer. The stock widget does not set `voiceRecognition` or a speech provider. Turning them on needs a speech service and a widget config this package does not build. Leave them off until that service exists.
+Those three demos attach a speech engine to the composer. They are not in this gallery. The stock widget does not set `voiceRecognition` or a speech provider.
 
 ### Agent Loop
 
-The demo is a multi-step turn: text, reasoning, tools, then a final answer. Persona hides it in the gallery. It is the default path here.
+[/examples/agent](../examples/gallery/resources/views/examples/agent.blade.php) is the multi-step turn: reasoning, the server tool `lookup_order`, then the answer. Persona hides this demo in its own gallery. It is the path `POST /examples/agent/dispatch` runs here, and the path `POST /determly/chat/dispatch` runs in an app.
 
-`POST /determly/chat/dispatch` runs that loop for Laravel AI, Prism, or echo. The library proposes one step. The runner executes a server tool or pauses. It then calls the library again, up to eight rounds. Reasoning is `reasoning_start`, `reasoning_delta`, and `reasoning_complete`. Tools are `tool_start` and `tool_complete`. Search and fetch do not spend credits. A tool that starts a web task returns a run id and returns.
+The library proposes one step. The runner executes a server tool or pauses. It then calls the library again, up to eight rounds. In the gallery the library is the scripted responder. Reasoning is `reasoning_start`, `reasoning_delta`, and `reasoning_complete`. Tools are `tool_start` and `tool_complete`.
 
 ## Patterns
 
 ### Tool and Reasoning Loaders
 
-The demo changes how a tool call and a reasoning block look while they stream.
+[/examples/loaders](../examples/gallery/resources/views/examples/loaders.blade.php) yields a reasoning row, pauses long enough to see it, then calls `query_orders`.
 
-The stock widget sets `features.showReasoning` and `features.showToolCalls` to true, so those rows are visible. It does not set a custom loader animation. The graphic is the one Persona 4.39.0 uses when those flags are on.
+The stock widget sets `features.showReasoning` and `features.showToolCalls` to true. It does not set a custom loader animation. The graphic is the one Persona 4.39.0 uses when those flags are on.
 
 ### Text Reveal Effects
 
-The demo cycles `features.streamAnimation.type` through typewriter, letter rise, word fade, and the other built-in reveals. The default in Persona is `none`.
-
-The stock widget does not set `features.streamAnimation`. Deltas still stream. They appear without a reveal animation.
+Not in this gallery. The demo cycles `features.streamAnimation.type`. The stock widget does not set `features.streamAnimation`. Deltas still stream. They appear without a reveal animation.
 
 ### Streaming Markdown Tables
 
-The demo shows a markdown table that keeps its column widths while rows are still arriving.
+[/examples/tables](../examples/gallery/resources/views/examples/tables.blade.php) streams a markdown table as separate `text_delta` frames.
 
 The 4.39.0 installer sets `postprocessMessage` to `markdownPostprocessor` when the page did not set its own. A markdown table in `text_delta` or in `emit_artifact_markdown` content goes through that renderer. There is no extra table setting in `config/determly-chat.php`.
 
 ### Replace the Loader
 
-The demo swaps the waiting indicator for a custom drawing. The stock script does not pass a loading renderer. The launcher and the transcript use Persona's loader.
+Not in this gallery. The stock script does not pass a loading renderer. The launcher and the transcript use Persona's loader.
 
 ### Tool Approval
 
-The demo asks before a tool runs.
+[/examples/approval](../examples/gallery/resources/views/examples/approval.blade.php) calls `refund_order`. `requiresApproval()` is true, so the runner emits `agent_approval_start` and `step_await` with `awaitReason: approval_required`, and does not call `handle()` yet. The widget posts to `/examples/approval/dispatch/v1/agents/determly/approve` with `executionId`, `approvalId`, and `decision` (`approved` or `denied`). After approval, `handle()` records the refund and the page reloads `GET /examples/approval/refunds`.
 
-```php
-public function requiresApproval(): bool
-{
-    return true;
-}
-```
-
-The runner emits `agent_approval_start` and `step_await` with `awaitReason: approval_required`, and does not call `handle()` yet. The widget posts to `/determly/chat/dispatch/v1/agents/determly/approve` with `executionId`, `approvalId`, and `decision` (`approved` or `denied`). `remember: true` stores that tool name in the cache until `determly-chat:allowed-tools` is cleared. Denied skips `handle()`.
+In an app the approve URL is `{dispatch}/v1/agents/{agent}/approve`. `remember: true` stores that tool name in the cache until `determly-chat:allowed-tools` is cleared. Denied skips `handle()`. The gallery uses the file cache so the paused execution survives the next PHP process.
 
 ### Tool Action Handlers
 
-The demo parses an action out of the answer and runs it against the live DOM, such as navigation or a cart.
+[/examples/actions](../examples/gallery/resources/views/examples/actions.blade.php) calls the page tool `add_to_cart`. It is not read-only, so the confirm bubble shows. `execute` appends a line to the cart on the page, then posts `/resume`.
 
-This package does not register an action parser. Put the action in a page tool. The model calls `refresh_orders` or `add_to_cart`. The server pauses with `origin: webmcp`. The browser function you registered on `document.modelContext` runs, then posts `/resume`. A read-only tool sets `annotations.readOnlyHint` so the confirm bubble is skipped. Anything else asks first.
-
-The same `execute` function is where Livewire, Filament, Inertia, and Blade differ. Use the `refreshOrders` body from [installation.md](installation.md).
+This package does not register an action parser. A read-only tool sets `annotations.readOnlyHint` so the confirm bubble is skipped. The same `execute` function is where Livewire, Filament, Inertia, and Blade differ. Use the `refreshOrders` body from [installation.md](installation.md) when the page should reload server HTML, as `/examples/data` does.
 
 ### File Attachments
 
-The demo lets the visitor attach a file or an image in the composer. The stock widget does not enable that composer. There is no upload route in this package.
+Not in this gallery. The stock widget does not enable that composer. There is no upload route in this package.
 
 ### Feedback Events
 
-The demo sends upvote, downvote, and copy to a backend.
-
-The widget already emits `message:feedback` and `message:copy` on the handle. Post them to a route you own. The chat package does not store feedback.
+[/examples/feedback](../examples/gallery/resources/views/examples/feedback.blade.php) listens for `message:feedback` and `message:copy` and posts them to Laravel. The page shows the stored rows. Upvote and downvote are turned on for that page (`messageActions.showUpvote` and `showDownvote`). Copy is already on.
 
 ```js
 window.addEventListener('persona:chat-ready', function (event) {
   var handle = event.detail;
   handle.on('message:feedback', function (feedback) {
-    fetch('/chat/feedback', {
+    fetch('/examples/feedback/feedback', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        'Accept': 'text/html',
         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
       },
-      body: JSON.stringify(feedback)
+      body: JSON.stringify({ type: feedback.type, messageId: feedback.messageId })
     });
   });
   handle.on('message:copy', function (message) {
-    fetch('/chat/copied', {
+    fetch('/examples/feedback/copied', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        'Accept': 'text/html',
         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
       },
       body: JSON.stringify({ id: message.id })
@@ -162,48 +153,45 @@ window.addEventListener('persona:chat-ready', function (event) {
 });
 ```
 
-`/chat/feedback` and `/chat/copied` are yours. Put them behind the same auth as the rest of the app. The chat dispatch routes are not these URLs.
+Those two URLs belong to the gallery. An app uses its own routes, behind the same auth as the rest of the app. The chat dispatch routes are not these URLs. The chat package does not store feedback.
 
 ### Programmatic Input Focus
 
-The demo uses three Persona 4.39.0 APIs:
+[/examples/focus](../examples/gallery/resources/views/examples/focus.blade.php) has two buttons:
 
-- `autoFocusInput: true` focuses the composer after the panel opens. The stock config leaves this at Persona's default, which is false.
 - `window.determlyChat.focusInput()` focuses the open composer. It fails when the panel is closed.
 - `window.dispatchEvent(new CustomEvent('persona:focusInput'))` focuses every instance on the page.
 
-Call `focusInput` from `persona:chat-ready`, or after you open the panel. The handle is `event.detail` and `window.determlyChat`.
+`autoFocusInput` stays off. That is Persona's default, and the stock widget does not set it. The gallery does open the panel with `launcher.autoExpand` so the composer is there to focus. The handle is `event.detail` and `window.determlyChat`.
 
 ## Reference
 
 ### Form Field Reference
 
-The demo is the field list for `DynamicForm`: `text`, `email`, `tel`, `url`, `number`, `date`, `time`, and `textarea`. `width` is `full` or `half`. `required` draws the asterisk. `helper_text` is the line under the control.
+[/examples/forms](../examples/gallery/resources/views/examples/forms.blade.php) sends one `DynamicForm` with `text`, `email`, `tel`, `url`, `number`, `date`, `time`, and `textarea`. `width` is `full` or `half`. `required` draws the asterisk. `helper_text` is the line under the control.
 
-That is what `DynamicForm` implements. The demo also shows input masks. This component does not. A masked field is a component you register yourself.
+That is what `DynamicForm` implements. Persona's demo also shows input masks. This component does not. A masked field is a component you register yourself.
 
 Half fields sit two to a row. A submit posts a sentence to the chat through `sendMessage`, one `name: value` pair per field.
 
 ### Event Inspector
 
-The demo shows Persona's event-stream panel and the controller events.
+[/examples/events](../examples/gallery/resources/views/examples/events.blade.php) appends persona handle events to a list on the page.
 
 The stock widget does not set `features.showEventStreamToggle`. Subscribe instead. The names and payloads are in [events.md](events.md). `assistant:complete` and `run:finished` are the ones a Laravel page uses to refresh. `approval:requested` and `approval:resolved` match the approval tool. `stream:paused` is a dropped stream, which is separate from `step_await`.
 
 ### Shadow-aware Page Context
 
-The demo reads product cards that live inside a shadow root, which a normal DOM walk misses.
+[/examples/shadow](../examples/gallery/resources/views/examples/shadow.blade.php) puts a product card in a shadow root. The page tool `read_product` is read-only. Its `execute` walks `shadowRoot` and returns the title, price, and sku.
 
-The injected widget does not turn that reader on, and it mounts with shadow DOM off. If the data is in Laravel, query it in a server tool. If the data exists only in the open page, read it inside the page tool's `execute`. That function runs in the page, so it can walk a shadow root you know about.
+The injected widget does not turn on a shadow reader, and it mounts with shadow DOM off. The page tool runs in the page, so it can walk a shadow root the page created.
 
 ### Scroll Engineering
 
 The demo tunes `features.scrollBehavior` so a streaming thread stays pinned to the latest line without fighting the visitor.
 
-The stock widget does not set `features.scrollBehavior`. Persona 4.39.0's own defaults apply. There is no env key for those options.
+The stock widget does not set `features.scrollBehavior`. Persona 4.39.0's own defaults apply. There is no env key for those options, and this gallery does not add a page for it.
 
-## What you turn on yourself
+## What stays off
 
-`config/determly-chat.php` already covers artifacts, questions, WebMCP, and the floating, docked, and fullscreen mounts. The gallery items that need a speech engine, file uploads, a custom loader, or a reveal animation are not flags on that file. They stay off so a new install matches the tested widget.
-
-A page script can still use the handle, register page tools, and add components. That is the Laravel path for Talk to Your Data, action handlers, feedback, and focus.
+`config/determly-chat.php` covers artifacts, questions, WebMCP, and the floating, docked, and fullscreen mounts. Speech, file uploads, a custom loader, and a reveal animation are not flags on that file. They stay off so a new install matches the tested widget, and they are not pages in `examples/gallery`.

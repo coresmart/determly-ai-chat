@@ -9,9 +9,22 @@ Determly monorepo for [Persona](https://www.persona-chat.dev) chat. Each install
 
 `determly/chat-laravel` depends on `determly/chat`. Blade, Livewire, Inertia React, Inertia Vue, and Filament all load `@runtypelabs/persona` 4.39.0. The stack detector reports which app is installed. It does not swap the widget.
 
-Install and wire Laravel AI, Prism, Blade, Livewire, Filament, and Inertia: [docs/installation.md](docs/installation.md). Persona's advanced gallery, and how each demo maps onto Laravel: [docs/advanced-examples.md](docs/advanced-examples.md).
+Install and wire Laravel AI, Prism, Blade, Livewire, Filament, and Inertia: [docs/installation.md](docs/installation.md). The runnable Persona examples are the Laravel app in [examples/gallery](examples/gallery). How each demo maps onto Laravel: [docs/advanced-examples.md](docs/advanced-examples.md).
 
 Details: [docs/chat.md](docs/chat.md). Page integration: [docs/integration.md](docs/integration.md). Events: [docs/events.md](docs/events.md). Components and features: [docs/components.md](docs/components.md). Prism and Laravel AI example: [examples/support-chat](examples/support-chat). Decisions: [DECISIONS.md](DECISIONS.md).
+
+## Gallery
+
+`examples/gallery` is a small Laravel app on the monorepo `vendor/`. It serves a Persona widget for each advanced example and answers in echo mode, so it does not need an API key. `DETERMLY_CHAT_AI=echo` and `DETERMLY_CHAT_INJECT=false` are set in `examples/gallery/.env`. Approvals and resumes use the file cache.
+
+From this repository:
+
+```bash
+composer install
+php -S 127.0.0.1:8080 -t examples/gallery/public examples/gallery/public/index.php
+```
+
+Open http://127.0.0.1:8080/. The router script is required so `/examples/...` is handled by Laravel. Pages and the `APP_KEY` are listed in [examples/gallery/README.md](examples/gallery/README.md).
 
 ## Development
 

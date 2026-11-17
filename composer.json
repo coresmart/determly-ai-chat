@@ -24,7 +24,9 @@
         "psr-4": {
             "Determly\\Chat\\Tests\\": "packages/chat/tests/",
             "Determly\\Chat\\Laravel\\Tests\\": "packages/chat-laravel/tests/",
-            "Determly\\Chat\\Examples\\": "examples/support-chat/src/"
+            "Determly\\Chat\\Examples\\": "examples/support-chat/src/",
+            "Determly\\Chat\\Gallery\\": "examples/gallery/app/",
+            "Determly\\Chat\\Gallery\\Tests\\": "examples/gallery/tests/"
         }
     },
     "minimum-stability": "dev",
