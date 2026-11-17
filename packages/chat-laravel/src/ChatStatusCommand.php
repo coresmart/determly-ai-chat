@@ -41,7 +41,7 @@ final class ChatStatusCommand extends Command
         $this->line('Artifacts: '.(config('determly-chat.artifacts') ? 'on' : 'off'));
         $this->line('Ask user: '.(config('determly-chat.ask_user') ? 'on' : 'off'));
         $this->line('Components: DynamicForm, ProductCard, Notice');
-        if ($this->reportAi() !== self::SUCCESS) {
+        if ($this->reportTheme() !== self::SUCCESS || $this->reportAi() !== self::SUCCESS) {
             return self::FAILURE;
         }
 
@@ -52,6 +52,40 @@ final class ChatStatusCommand extends Command
             foreach ($owners as $name => $owner) {
                 $this->line('Tool: '.$name.' ('.$owner.')');
             }
+        }
+
+        return self::SUCCESS;
+    }
+
+    private function reportTheme(): int
+    {
+        try {
+            $persona = Theme::resolve(config('determly-chat.appearance'))->persona();
+        } catch (InvalidChat $error) {
+            $this->error($error->getMessage());
+
+            return self::FAILURE;
+        }
+
+        if ($persona === []) {
+            $this->line('Theme: Persona defaults');
+
+            return self::SUCCESS;
+        }
+
+        $scheme = is_string($persona['colorScheme'] ?? null) ? $persona['colorScheme'] : 'light';
+        $this->line('Theme: '.$scheme);
+        $brand = is_array($persona['brand'] ?? null) ? $persona['brand'] : [];
+        foreach (['accent', 'neutral', 'font', 'radius', 'density', 'elevation'] as $field) {
+            if (is_string($brand[$field] ?? null) && $brand[$field] !== '') {
+                $this->line(ucfirst($field).': '.$brand[$field]);
+            }
+        }
+        if (isset($persona['theme'])) {
+            $this->line('Tokens: theme');
+        }
+        if (isset($persona['darkTheme'])) {
+            $this->line('Tokens: dark theme');
         }
 
         return self::SUCCESS;
