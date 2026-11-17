@@ -1,0 +1,41 @@
+{
+    "name": "determly/ai-chat-workspace",
+    "description": "Composer workspace for the Determly chat monorepo. Installable packages live under packages/.",
+    "type": "project",
+    "license": "MIT",
+    "private": true,
+    "require": {
+        "php": ">=8.3",
+        "determly/chat": "*@dev",
+        "determly/chat-laravel": "*@dev"
+    },
+    "require-dev": {
+        "laravel/ai": "^1.4",
+        "phpunit/phpunit": "^11.5",
+        "prism-php/prism": "^0.103"
+    },
+    "repositories": [
+        {
+            "type": "path",
+            "url": "packages/*"
+        }
+    ],
+    "autoload-dev": {
+        "psr-4": {
+            "Determly\\Chat\\Tests\\": "packages/chat/tests/",
+            "Determly\\Chat\\Laravel\\Tests\\": "packages/chat-laravel/tests/",
+            "Determly\\Chat\\Examples\\": "examples/support-chat/src/"
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "config": {
+        "sort-packages": true,
+        "platform": {
+            "php": "8.3.99"
+        }
+    },
+    "scripts": {
+        "test": "phpunit"
+    }
+}

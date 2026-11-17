@@ -1,0 +1,17 @@
+{
+    "name": "determly/chat",
+    "description": "Persona SSE wire for Determly. Recipes and other chats speak this. No Laravel dependency.",
+    "type": "library",
+    "license": "MIT",
+    "version": "0.1.0",
+    "require": {
+        "php": ">=8.3"
+    },
+    "autoload": {
+        "psr-4": {
+            "Determly\\Chat\\": "src/"
+        }
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true
+}
