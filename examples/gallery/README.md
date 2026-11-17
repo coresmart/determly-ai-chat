@@ -1,6 +1,6 @@
 # Gallery
 
-A Laravel app you can open in the browser. Each page mounts the Persona 4.39.0 widget and posts to `/examples/{slug}/dispatch`. The responder is scripted. `DETERMLY_CHAT_AI=echo` and `DETERMLY_CHAT_INJECT=false`. There is no model key.
+A Laravel app you can open in the browser. Each page mounts the Persona 4.39.0 widget and posts to `/examples/{slug}/dispatch`. The scripted pages use `GalleryResponder`. `DETERMLY_CHAT_AI=echo` and `DETERMLY_CHAT_INJECT=false`. `/examples/laravel-ai` and `/examples/prism` do not use that script. They send the sentence to Laravel AI or Prism. Set `DETERMLY_CHAT_PROVIDER`, `DETERMLY_CHAT_MODEL`, and the provider key (`OPENAI_API_KEY` for `openai`).
 
 The app has no `vendor/` of its own. `public/index.php` loads the monorepo `vendor/autoload.php` and sets `COMPOSER_VENDOR_DIR` so package discovery can see it. `Determly\Chat\Laravel\ChatServiceProvider` is registered from `bootstrap/providers.php`. The gallery provider then binds `GalleryResponder` and registers `query_orders`, `refund_order`, and `lookup_order`.
 
@@ -32,7 +32,9 @@ The panel opens on load (`launcher.autoExpand`) and does not keep the transcript
 | Ask User Question | http://127.0.0.1:8080/examples/ask | Pauses on `ask_user_question`. After you answer, chips from `suggest_replies`. |
 | Artifact Sidebar | http://127.0.0.1:8080/examples/artifacts | `emit_artifact_markdown` and a ProductCard via `emit_artifact_component`. |
 | Dynamic Components | http://127.0.0.1:8080/examples/components | A JSON-only reply for DynamicForm, ProductCard, or Notice. |
-| Agent Loop | http://127.0.0.1:8080/examples/agent | Reasoning, `lookup_order`, then the answer. |
+| Agent Loop | http://127.0.0.1:8080/examples/agent | Scripted reasoning, `lookup_order`, then a sentence written in PHP. |
+| Laravel AI | http://127.0.0.1:8080/examples/laravel-ai | The sentence goes to Laravel AI. The model chooses the tool and writes the answer. |
+| Prism | http://127.0.0.1:8080/examples/prism | The sentence goes to Prism. The model chooses the tool and writes the answer. |
 | Tool Approval | http://127.0.0.1:8080/examples/approval | `refund_order` pauses. `handle()` runs after you approve, and the list reloads from `GET /examples/approval/refunds`. |
 | Tool Action Handlers | http://127.0.0.1:8080/examples/actions | `add_to_cart` asks first, then adds a line to the cart on the page. |
 | Feedback Events | http://127.0.0.1:8080/examples/feedback | Upvote, downvote, and copy post to `/examples/feedback/feedback` and `/examples/feedback/copied`. |

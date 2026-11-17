@@ -7,8 +7,10 @@ namespace Determly\Chat\Gallery\Http;
 use Determly\Chat\Gallery\Activity;
 use Determly\Chat\Gallery\Catalog;
 use Determly\Chat\Gallery\GalleryWidget;
+use Determly\Chat\Gallery\ModelChat;
 use Determly\Chat\Gallery\Orders;
 use Determly\Chat\Gallery\Refunds;
+use Determly\Chat\Laravel\Ai\AiChoice;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
 
@@ -26,13 +28,24 @@ final class GalleryController
     {
         abort_unless(Catalog::has($example), 404);
 
-        return view('examples.'.$example, [
+        $data = [
             'example' => Catalog::get($example),
             'widget' => GalleryWidget::html($example),
             'orders' => Orders::query('all'),
             'refunds' => Refunds::all(),
             'activity' => Activity::all(),
-        ]);
+        ];
+        if (ModelChat::handles($example)) {
+            $data['model'] = ModelChat::describe(
+                $example,
+                AiChoice::present(config('determly-chat.provider')),
+                AiChoice::present(config('determly-chat.model')),
+            );
+
+            return view('examples.model', $data);
+        }
+
+        return view('examples.'.$example, $data);
     }
 
     public function orders(Request $request): View
