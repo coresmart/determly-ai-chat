@@ -124,6 +124,15 @@ final class GalleryResponderTest extends TestCase
         $this->assertStringNotContainsString('autoFocusInput', $html);
     }
 
+    public function test_the_theme_page_passes_a_brand_into_the_widget(): void
+    {
+        $html = GalleryWidget::html('theme');
+
+        $this->assertStringContainsString('"accent":"#0f766e"', $html);
+        $this->assertStringContainsString('"radius":"lg"', $html);
+        $this->assertStringContainsString('Georgia', $html);
+    }
+
     /**
      * @param  array<string, mixed>  $body
      * @param  callable(Runner, Emitter): void|null  $handler

@@ -12,7 +12,7 @@ The last argument is the router. Without it, the built-in server only serves fil
 
 `examples/gallery/.env` sets `DETERMLY_CHAT_AI=echo`, `DETERMLY_CHAT_INJECT=false`, `CACHE_STORE=file`, `SESSION_DRIVER=file`, and a local `APP_KEY`. The gallery also forces echo and the file cache in its service provider. Both `laravel/ai` and `prism-php/prism` are installed in this workspace, so `auto` would error. Echo mode needs no API key. The file cache is required because PHP's built-in server is a new process per request; the array cache would drop an approval or a resume. `storage/framework/cache` must be writable. The app has no `vendor/` of its own. `public/index.php` points `COMPOSER_VENDOR_DIR` at the monorepo `vendor/` and loads that autoload file.
 
-How to open each page is in [examples/gallery/README.md](../examples/gallery/README.md). Install and the per-stack refresh calls are in [installation.md](installation.md). Component props are in [components.md](components.md). Frames and handle events are in [events.md](events.md).
+How to open each page is in [examples/gallery/README.md](../examples/gallery/README.md). `/examples/theme` is the themed widget. Install, the per-stack refresh calls, and the theme config are in [installation.md](installation.md). Component props are in [components.md](components.md). Frames and handle events are in [events.md](events.md).
 
 Voice input and output, bring-your-own voice, server TTS, text-reveal animations, custom loader graphics, and file attachments are not pages in this gallery. The home page names them once.
 

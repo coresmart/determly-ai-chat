@@ -114,6 +114,12 @@ final class Catalog
                 'summary' => 'A reasoning row stays on screen, then query_orders runs. The pause is long enough to see both.',
                 'starters' => ['Check the open orders'],
             ],
+            'theme' => [
+                'title' => 'Theme',
+                'subtitle' => 'Brand colors from PHP',
+                'summary' => 'This page passes a Theme into the widget: teal accent, light surface, serif font, large radius.',
+                'starters' => ['What colors is this chat using?'],
+            ],
         ];
     }
 

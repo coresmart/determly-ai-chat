@@ -8,6 +8,7 @@ use Determly\Chat\InvalidChat;
 use Determly\Chat\Laravel\HtmlInjector;
 use Determly\Chat\Laravel\Stack;
 use Determly\Chat\Laravel\StackDetector;
+use Determly\Chat\Laravel\Theme;
 use Determly\Chat\Laravel\Widget;
 use PHPUnit\Framework\TestCase;
 
@@ -112,5 +113,69 @@ final class StackMountTest extends TestCase
     {
         $this->expectException(InvalidChat::class);
         Widget::html('/determly/chat/dispatch', 'Assistant', 'Ask a question', 'determlyChat', true, 'body', 'popup');
+    }
+
+    public function test_an_empty_theme_leaves_persona_colors_alone(): void
+    {
+        $html = Widget::html('/determly/chat/dispatch', theme: Theme::make());
+
+        $this->assertStringNotContainsString('"brand"', $html);
+        $this->assertStringNotContainsString('colorScheme', $html);
+    }
+
+    public function test_a_php_theme_is_written_into_the_widget_config(): void
+    {
+        $theme = Theme::make()
+            ->colorScheme('auto')
+            ->accent('#0f766e')
+            ->neutral('#f8fafc')
+            ->font('Georgia, "Times New Roman", serif')
+            ->radius('lg')
+            ->density('comfortable')
+            ->elevation('subtle')
+            ->colors(['surface' => '#ffffff', 'text' => 'palette.colors.gray.900'])
+            ->tokens(['components' => ['panel' => ['borderRadius' => '16px']]])
+            ->darkTokens(['semantic' => ['colors' => ['surface' => '#0f172a']]]);
+
+        $html = Widget::html('/determly/chat/dispatch', theme: $theme);
+
+        $this->assertStringContainsString('"colorScheme":"auto"', $html);
+        $this->assertStringContainsString('"accent":"#0f766e"', $html);
+        $this->assertStringContainsString('"neutral":"#f8fafc"', $html);
+        $this->assertStringContainsString('Georgia', $html);
+        $this->assertStringContainsString('"radius":"lg"', $html);
+        $this->assertStringContainsString('"surface":"#ffffff"', $html);
+        $this->assertStringContainsString('"borderRadius":"16px"', $html);
+        $this->assertStringContainsString('"darkTheme":{"semantic":{"colors":{"surface":"#0f172a"}}}', $html);
+    }
+
+    public function test_theme_config_skips_empty_brand_fields(): void
+    {
+        $theme = Theme::fromConfig([
+            'color_scheme' => 'dark',
+            'brand' => [
+                'accent' => '#111827',
+                'neutral' => null,
+                'font' => '',
+            ],
+        ]);
+
+        $persona = $theme->persona();
+
+        $this->assertSame('dark', $persona['colorScheme']);
+        $this->assertSame(['accent' => '#111827'], $persona['brand']);
+        $this->assertArrayNotHasKey('theme', $persona);
+    }
+
+    public function test_a_flat_color_map_is_rejected(): void
+    {
+        $this->expectException(InvalidChat::class);
+        Theme::make()->tokens(['primary' => '#111827']);
+    }
+
+    public function test_a_translucent_brand_color_is_rejected(): void
+    {
+        $this->expectException(InvalidChat::class);
+        Theme::make()->accent('rgba(15, 118, 110, 0.5)');
     }
 }
