@@ -92,7 +92,7 @@ The library proposes one step. The runner executes a server tool or pauses. It t
 
 The starters ask about a customer ("Did Jordan Blake's order ship?"). The scripted agent page cannot answer that. It only keeps a number from the message.
 
-Set `DETERMLY_CHAT_PROVIDER`, `DETERMLY_CHAT_MODEL`, and the provider key. For `openai` / `gpt-4o-mini`, the key is `OPENAI_API_KEY`. A missing key is an `execution_error` on the stream. The page does not fall back to the script.
+The default provider is `openrouter` and the default model is `openai/gpt-4o-mini`. The key is `OPENROUTER_API_KEY`. It is not a parameter in `config/determly-chat.php`. A missing key is an `execution_error` on the stream. The page does not fall back to the script.
 
 ## Patterns
 
