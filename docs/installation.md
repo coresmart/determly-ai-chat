@@ -68,16 +68,16 @@ The chat package does not install a model library. Echo answers until you instal
 composer require laravel/ai:^1.4
 ```
 
-Publish Laravel AI's own config the way that package documents, then set its key. With `DETERMLY_CHAT_PROVIDER` and `DETERMLY_CHAT_MODEL` empty, Laravel AI uses the default in `config/ai.php`, which is `openai`, and that library's default model. Set them when the chat should pin a provider or a model:
+Publish Laravel AI's own config the way that package documents, then set its key. `DETERMLY_CHAT_PROVIDER` defaults to `openrouter` and `DETERMLY_CHAT_MODEL` defaults to `openai/gpt-4.1-mini`. Neither value is an API key.
 
 ```dotenv
 DETERMLY_CHAT_AI=laravel-ai
-DETERMLY_CHAT_PROVIDER=openai
-DETERMLY_CHAT_MODEL=gpt-4o-mini
-OPENAI_API_KEY=
+DETERMLY_CHAT_PROVIDER=openrouter
+DETERMLY_CHAT_MODEL=openai/gpt-4.1-mini
+OPENROUTER_API_KEY=
 ```
 
-`DETERMLY_CHAT_PROVIDER` is passed to Laravel AI as the provider name. Laravel AI 1.4 accepts `anthropic`, `azure`, `bedrock`, `cohere`, `deepseek`, `eleven`, `gemini`, `groq`, `jina`, `mistral`, `ollama`, `openai`, `openai-compatible`, `openrouter`, `typesafe`, `voyageai`, and `xai`. The key stays in that library's env var (`OPENAI_API_KEY`, `ANTHROPIC_API_KEY`, `GEMINI_API_KEY`, and the rest of `config/ai.php`). This package never reads the key.
+`DETERMLY_CHAT_PROVIDER` is passed to Laravel AI as the provider name. Laravel AI 1.4 accepts `anthropic`, `azure`, `bedrock`, `cohere`, `deepseek`, `eleven`, `gemini`, `groq`, `jina`, `mistral`, `ollama`, `openai`, `openai-compatible`, `openrouter`, `typesafe`, `voyageai`, and `xai`. The key stays in that library's env var. For OpenRouter that var is `OPENROUTER_API_KEY`, read by `config/ai.php`. This package never reads the key.
 
 `eleven` is Laravel AI's name. Prism calls the same vendor `elevenlabs`. Do not copy one name into the other library.
 
@@ -91,12 +91,12 @@ Prism has no default provider. Both values are required:
 
 ```dotenv
 DETERMLY_CHAT_AI=prism
-DETERMLY_CHAT_PROVIDER=openai
-DETERMLY_CHAT_MODEL=gpt-4o-mini
-OPENAI_API_KEY=
+DETERMLY_CHAT_PROVIDER=openrouter
+DETERMLY_CHAT_MODEL=openai/gpt-4.1-mini
+OPENROUTER_API_KEY=
 ```
 
-`DETERMLY_CHAT_PROVIDER` is passed to `Prism::text()->using()`. Prism 0.103 accepts `anthropic`, `deepseek`, `ollama`, `openai`, `openrouter`, `mistral`, `groq`, `xai`, `gemini`, `voyageai`, `elevenlabs`, `perplexity`, and `z`. Keys are the ones in Prism's `config/prism.php`, such as `OPENAI_API_KEY` and `ANTHROPIC_API_KEY`.
+`DETERMLY_CHAT_PROVIDER` is passed to `Prism::text()->using()`. Prism 0.103 accepts `anthropic`, `deepseek`, `ollama`, `openai`, `openrouter`, `mistral`, `groq`, `xai`, `gemini`, `voyageai`, `elevenlabs`, `perplexity`, and `z`. The key is the one in Prism's `config/prism.php`. For OpenRouter that is `OPENROUTER_API_KEY`.
 
 ### Both libraries in one app
 
@@ -110,8 +110,8 @@ or:
 
 ```dotenv
 DETERMLY_CHAT_AI=prism
-DETERMLY_CHAT_PROVIDER=openai
-DETERMLY_CHAT_MODEL=gpt-4o-mini
+DETERMLY_CHAT_PROVIDER=openrouter
+DETERMLY_CHAT_MODEL=openai/gpt-4.1-mini
 ```
 
 Change `DETERMLY_CHAT_AI` and restart the PHP process to switch the chat. The tools do not change.
@@ -399,8 +399,8 @@ Boolean env values accept `true`, `false`, `1`, `0`, `yes`, and `no`.
 |---|---|---|
 | `DETERMLY_CHAT_INJECT` | `true` | Insert the widget before `</body>`. |
 | `DETERMLY_CHAT_AI` | `auto` | `auto`, `echo`, `laravel-ai`, or `prism`. |
-| `DETERMLY_CHAT_PROVIDER` | empty | Provider name for the selected library. Optional for Laravel AI. Required for Prism. |
-| `DETERMLY_CHAT_MODEL` | empty | Model name. Optional for Laravel AI. Required for Prism. |
+| `DETERMLY_CHAT_PROVIDER` | `openrouter` | Provider name passed to Laravel AI or Prism. Not an API key. |
+| `DETERMLY_CHAT_MODEL` | `openai/gpt-4.1-mini` | Model id. OpenRouter requires the `vendor/model` form. |
 | `DETERMLY_CHAT_INSTRUCTIONS` | package default | System text. |
 | `DETERMLY_CHAT_NAME` | `Assistant` | Name on the execution frame. |
 | `DETERMLY_CHAT_TITLE` | `Assistant` | Launcher title. |

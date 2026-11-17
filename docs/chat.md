@@ -101,12 +101,14 @@ Search and fetch do not spend credits. Agent runs do.
 |---|---|
 | `auto` | Echo when neither library is installed. Laravel AI when only `laravel/ai` is installed. Prism when only `prism-php/prism` is installed. If both are installed, the first message reports that this value must be set. |
 | `echo` | The echo responder, whether or not a library is installed. |
-| `laravel-ai` | Laravel AI. `DETERMLY_CHAT_PROVIDER` and `DETERMLY_CHAT_MODEL` are optional and fall back to the Laravel AI defaults. |
-| `prism` | Prism. Set both `DETERMLY_CHAT_PROVIDER` and `DETERMLY_CHAT_MODEL`. |
+| `laravel-ai` | Laravel AI. The provider defaults to `openrouter` and the model to `openai/gpt-4.1-mini`. |
+| `prism` | Prism. Same provider and model defaults. |
 
 The adapters were written against `laravel/ai` 1.4.0 and `prism-php/prism` 0.103.0. `determly/chat-laravel` does not require either library. Install the one the app should use. The workspace installs both so the adapters can be tested.
 
 `DETERMLY_CHAT_INSTRUCTIONS` replaces the default system text. Tool results go back to the model as untrusted data, not instructions. Search and fetch do not spend credits. A tool that starts a web task returns a run id. It does not call `agent->run()`.
+
+The API key is not a `determly-chat` parameter. OpenRouter reads `OPENROUTER_API_KEY` from Laravel AI's `config/ai.php` and from Prism's `config/prism.php`.
 
 Laravel AI and Prism propose text, reasoning, and tool calls. The runner executes server tools, pauses for approval, and pauses for a page tool. Each library takes one model step per call, so it does not execute the tool itself. Prism's tool callback returns an empty string for the same reason. After a tool, the runner calls the responder again with the tool result in the transcript. `php artisan determly:chat` prints the choice.
 

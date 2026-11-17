@@ -1,6 +1,6 @@
 # Gallery
 
-A Laravel app you can open in the browser. Each page mounts the Persona 4.39.0 widget and posts to `/examples/{slug}/dispatch`. The scripted pages use `GalleryResponder`. `DETERMLY_CHAT_AI=echo` and `DETERMLY_CHAT_INJECT=false`. `/examples/laravel-ai` and `/examples/prism` do not use that script. They send the sentence to Laravel AI or Prism. Set `DETERMLY_CHAT_PROVIDER`, `DETERMLY_CHAT_MODEL`, and the provider key (`OPENAI_API_KEY` for `openai`).
+A Laravel app you can open in the browser. Each page mounts the Persona 4.39.0 widget and posts to `/examples/{slug}/dispatch`. The scripted pages use `GalleryResponder`. `DETERMLY_CHAT_AI=echo` and `DETERMLY_CHAT_INJECT=false`. `/examples/laravel-ai` and `/examples/prism` do not use that script. They send the sentence to Laravel AI or Prism. The example uses OpenRouter (`openrouter` / `openai/gpt-4.1-mini`). The provider key is `OPENROUTER_API_KEY` in `.env`. It is not a `determly-chat` config parameter.
 
 The app has no `vendor/` of its own. `public/index.php` loads the monorepo `vendor/autoload.php` and sets `COMPOSER_VENDOR_DIR` so package discovery can see it. `Determly\Chat\Laravel\ChatServiceProvider` is registered from `bootstrap/providers.php`. The gallery provider then binds `GalleryResponder` and registers `query_orders`, `refund_order`, and `lookup_order`.
 
