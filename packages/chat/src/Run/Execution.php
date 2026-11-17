@@ -11,6 +11,7 @@ final class Execution
      * @param  list<string>  $clientTools
      * @param  array<string, mixed>  $context
      * @param  array<string, mixed>  $metadata
+     * @param  array<string, array{origin?: string, description?: string, parameters?: array<string, mixed>}>  $clientToolMeta
      */
     public function __construct(
         public readonly string $id,
@@ -20,6 +21,7 @@ final class Execution
         public array $metadata = [],
         public ?Pending $pending = null,
         public int $rounds = 0,
+        public array $clientToolMeta = [],
     ) {}
 
     /**
@@ -35,6 +37,7 @@ final class Execution
             'metadata' => $this->metadata,
             'pending' => $this->pending?->toArray(),
             'rounds' => $this->rounds,
+            'clientToolMeta' => $this->clientToolMeta,
         ];
     }
 
@@ -44,6 +47,7 @@ final class Execution
     public static function fromArray(array $data): self
     {
         $pending = $data['pending'] ?? null;
+        $meta = $data['clientToolMeta'] ?? [];
 
         return new self(
             (string) $data['id'],
@@ -53,6 +57,7 @@ final class Execution
             is_array($data['metadata'] ?? null) ? $data['metadata'] : [],
             is_array($pending) ? Pending::fromArray($pending) : null,
             (int) ($data['rounds'] ?? 0),
+            is_array($meta) && ! array_is_list($meta) ? $meta : [],
         );
     }
 }

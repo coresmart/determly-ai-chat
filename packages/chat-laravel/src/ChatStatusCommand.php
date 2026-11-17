@@ -27,6 +27,9 @@ final class ChatStatusCommand extends Command
         $this->line('Stack: '.$stack->value);
         $this->line($stack->summary());
         $this->line('Dispatch: '.url((string) config('determly-chat.path')));
+        $windowKey = (string) config('determly-chat.window_key', 'determlyChat');
+        $this->line('Window: '.($windowKey !== '' ? 'window.'.$windowKey : 'persona:chat-ready'));
+        $this->line('WebMCP: '.(config('determly-chat.webmcp') ? 'on' : 'off'));
         if ($this->reportAi() !== self::SUCCESS) {
             return self::FAILURE;
         }

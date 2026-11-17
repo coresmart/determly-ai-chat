@@ -163,6 +163,36 @@ final class RunnerTest extends TestCase
         $this->assertSame(2, $responder->calls);
     }
 
+    public function test_a_webmcp_page_tool_pauses_with_its_origin(): void
+    {
+        $responder = new ScriptResponder([
+            [Step::tool('refresh_orders', [])],
+        ]);
+
+        $frames = $this->play(function (Runner $runner, Emitter $emit): void {
+            $runner->dispatch(Turn::fromArray([
+                'messages' => [['role' => 'user', 'content' => 'refresh']],
+                'clientTools' => [[
+                    'name' => 'refresh_orders',
+                    'origin' => 'webmcp',
+                    'description' => 'Reload the orders table.',
+                    'parametersSchema' => [
+                        'type' => 'object',
+                        'properties' => [
+                            'order_id' => ['type' => 'string'],
+                        ],
+                    ],
+                ]],
+            ]), $emit);
+        }, $responder);
+
+        $await = $this->event($frames, 'step_await');
+        $this->assertSame('local_tool_required', $await->data['awaitReason']);
+        $this->assertSame('refresh_orders', $await->data['toolName']);
+        $this->assertSame('webmcp', $await->data['origin']);
+        $this->assertNotContains('execution_complete', $this->names($frames));
+    }
+
     public function test_reasoning_closes_before_the_answer(): void
     {
         $frames = $this->play(function (Runner $runner, Emitter $emit): void {

@@ -2,6 +2,8 @@
 
 One Persona widget. One SSE dispatch endpoint. Every Laravel stack uses the same pair of packages.
 
+How the page talks to the widget: [integration.md](integration.md). Server frames and widget handle events: [events.md](events.md). A chat wired to both Prism and Laravel AI: [examples/support-chat](../examples/support-chat).
+
 | Package | What it is |
 |---|---|
 | `determly/chat` | Persona wire in PHP. No Laravel. |
@@ -75,7 +77,7 @@ A server tool closes any open text block, then sends `tool_start` and `tool_comp
 
 A tool that requires approval sends `agent_approval_start` and then `step_await` with `awaitReason: approval_required`. The stream stops there. The widget posts the decision to `{dispatch url}/v1/agents/{agentId}/approve` with `executionId`, `approvalId`, `decision` (`approved` or `denied`), and optional `remember`. The response is another SSE stream.
 
-A page tool (`clientTools` on the dispatch body, or a name starting with `webmcp:`) sends `step_await` with `awaitReason: local_tool_required`. The widget posts `{dispatch url}/resume` with `executionId` and `toolOutputs` keyed by `toolCallId`. That request does not include the transcript, so the server keeps the execution until the turn finishes.
+A page tool (`clientTools` on the dispatch body, or a name starting with `webmcp:`) sends `step_await` with `awaitReason: local_tool_required`. A tool the page sent with `origin: webmcp` includes that `origin` on the pause so Persona 4.39.0 runs it in the browser. The description and `parametersSchema` from that object are what the model sees. A bare name gets a generic `input` string. The widget posts `{dispatch url}/resume` with `executionId` and `toolOutputs` keyed by `toolCallId`. That request does not include the transcript, so the server keeps the execution until the turn finishes. The field list is in [events.md](events.md).
 
 Deltas are the text. The server does not send the full answer again at the end. The default responder streams the echo word by word, then offers two suggestions.
 
@@ -109,3 +111,5 @@ The adapters were written against `laravel/ai` 1.4.0 and `prism-php/prism` 0.103
 Laravel AI and Prism propose text, reasoning, and tool calls. The runner executes server tools, pauses for approval, and pauses for a page tool. Each library takes one model step per call, so it does not execute the tool itself. Prism's tool callback returns an empty string for the same reason. After a tool, the runner calls the responder again with the tool result in the transcript. `php artisan determly:chat` prints the choice.
 
 You can still bind your own `Determly\Chat\Run\Responder`. Return `Step::text()`, `Step::reasoning()`, `Step::tool()`, and `Step::suggestions()`. Do not call the model again yourself after a tool. The runner does that.
+
+The support chat example registers one tool and runs it through both libraries. Copy `examples/support-chat/.env.prism.example` or `examples/support-chat/.env.laravel-ai.example`. The page script is `examples/support-chat/resources/js/determly-chat.js`.

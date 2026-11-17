@@ -9,7 +9,7 @@ Determly monorepo for [Persona](https://www.persona-chat.dev) chat. Each install
 
 `determly/chat-laravel` depends on `determly/chat`. Blade, Livewire, Inertia React, Inertia Vue, and Filament all load `@runtypelabs/persona` 4.39.0. The stack detector reports which app is installed. It does not swap the widget.
 
-Details: [docs/chat.md](docs/chat.md). Decisions: [DECISIONS.md](DECISIONS.md).
+Details: [docs/chat.md](docs/chat.md). Page integration: [docs/integration.md](docs/integration.md). Events: [docs/events.md](docs/events.md). Prism and Laravel AI example: [examples/support-chat](examples/support-chat). Decisions: [DECISIONS.md](DECISIONS.md).
 
 ## Development
 

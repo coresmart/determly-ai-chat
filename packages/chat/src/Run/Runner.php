@@ -30,6 +30,7 @@ final class Runner
             $turn->clientTools,
             $turn->context,
             $turn->metadata,
+            clientToolMeta: $turn->clientToolMeta,
         );
         $this->store->put($execution);
         $this->drive($execution, $emit);
@@ -243,11 +244,16 @@ final class Runner
             $step->tool,
         );
         $this->store->put($execution);
-        $emit->pause('local_tool_required', [
+        $fields = [
             'toolName' => $step->tool,
             'toolCallId' => $callId,
             'parameters' => $step->input,
-        ]);
+        ];
+        $origin = $execution->clientToolMeta[$step->tool]['origin'] ?? null;
+        if ($origin === 'webmcp') {
+            $fields['origin'] = 'webmcp';
+        }
+        $emit->pause('local_tool_required', $fields);
     }
 
     private function pauseForApproval(Execution $execution, Emitter $emit, Step $step): void
@@ -279,7 +285,13 @@ final class Runner
 
     private function turn(Execution $execution): Turn
     {
-        return new Turn($execution->messages, $execution->context, $execution->metadata, $execution->clientTools);
+        return new Turn(
+            $execution->messages,
+            $execution->context,
+            $execution->metadata,
+            $execution->clientTools,
+            $execution->clientToolMeta,
+        );
     }
 
     private function outputText(mixed $output): string

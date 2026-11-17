@@ -11,7 +11,14 @@ use Determly\Chat\Tool;
  */
 final class PageTool implements Tool
 {
-    public function __construct(private readonly string $toolName) {}
+    /**
+     * @param  array<string, mixed>|null  $schema
+     */
+    public function __construct(
+        private readonly string $toolName,
+        private readonly ?string $toolDescription = null,
+        private readonly ?array $schema = null,
+    ) {}
 
     public function name(): string
     {
@@ -20,11 +27,16 @@ final class PageTool implements Tool
 
     public function description(): string
     {
-        return 'Runs in the browser. The server does not execute it. Put the arguments in input as JSON.';
+        return $this->toolDescription
+            ?? 'Runs in the browser. The server does not execute it. Put the arguments in input as JSON.';
     }
 
     public function parameters(): array
     {
+        if (is_array($this->schema) && ($this->schema['type'] ?? null) === 'object') {
+            return $this->schema;
+        }
+
         return [
             'type' => 'object',
             'properties' => [

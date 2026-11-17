@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Determly\Chat\Laravel\Tests;
 
 use Determly\Chat\Dispatch\Turn;
+use Determly\Chat\Examples\LookupOrder;
 use Determly\Chat\InvalidChat;
 use Determly\Chat\Laravel\Ai\AiChoice;
 use Determly\Chat\Laravel\Ai\LaravelChatAgent;
@@ -188,6 +189,62 @@ final class AiTest extends TestCase
         $this->assertSame('local_tool_required', $await->data['awaitReason']);
         $this->assertSame('page_cart', $await->data['toolName']);
         $this->assertNotContains('execution_complete', $this->names($paused));
+    }
+
+    public function test_the_support_chat_example_answers_through_laravel_ai_and_prism(): void
+    {
+        $order = new LookupOrder;
+        $tools = new ToolRegistry;
+        $tools->register($order, 'app');
+
+        LaravelChatAgent::fake([
+            new LaravelToolCall('call_1', 'lookup_order', ['order_id' => '1001']),
+            'Order 1001 is shipped.',
+        ]);
+        $laravel = $this->play(new LaravelAiResponder($tools, 'Be brief.', 'openai', 'gpt-test'), $tools);
+        $this->assertContains('lookup_order', $this->toolNames($laravel));
+        $this->assertSame('Order 1001 is shipped.', $this->text($laravel));
+
+        Prism::fake([
+            $this->prismResponse('', FinishReason::ToolCalls, [
+                new PrismToolCall('call_1', 'lookup_order', ['order_id' => '1001']),
+            ]),
+            $this->prismResponse('Order 1001 is shipped.', FinishReason::Stop),
+        ]);
+        $prism = $this->play(new PrismResponder($tools, 'Be brief.', 'openai', 'gpt-test'), $tools);
+        $this->assertContains('lookup_order', $this->toolNames($prism));
+        $this->assertSame('Order 1001 is shipped.', $this->text($prism));
+    }
+
+    public function test_the_support_chat_page_tool_keeps_its_schema_and_origin(): void
+    {
+        Prism::fake([
+            $this->prismResponse('', FinishReason::ToolCalls, [
+                new PrismToolCall('call_1', 'refresh_orders', []),
+            ]),
+        ]);
+        $responder = new PrismResponder(new ToolRegistry, 'Be brief.', 'openai', 'gpt-test');
+
+        $frames = $this->play($responder, new ToolRegistry, null, function (Runner $runner, $emit): void {
+            $runner->dispatch(Turn::fromArray([
+                'messages' => [['role' => 'user', 'content' => 'refresh the table']],
+                'clientTools' => [[
+                    'name' => 'refresh_orders',
+                    'origin' => 'webmcp',
+                    'description' => 'Reload the orders table on this page.',
+                    'parametersSchema' => [
+                        'type' => 'object',
+                        'properties' => [
+                            'order_id' => ['type' => 'string', 'description' => 'Limit the refresh to one order.'],
+                        ],
+                    ],
+                ]],
+            ]), $emit);
+        });
+
+        $await = $this->event($frames, 'step_await');
+        $this->assertSame('refresh_orders', $await->data['toolName']);
+        $this->assertSame('webmcp', $await->data['origin']);
     }
 
     public function test_prism_without_a_model_is_an_execution_error(): void

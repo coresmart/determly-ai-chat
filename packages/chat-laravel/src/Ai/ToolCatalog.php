@@ -25,7 +25,12 @@ final class ToolCatalog
         }
         foreach ($turn->clientTools as $name) {
             if (! isset($seen[$name])) {
-                $tools[] = new PageTool($name);
+                $meta = $turn->clientToolMeta[$name] ?? [];
+                $tools[] = new PageTool(
+                    $name,
+                    is_string($meta['description'] ?? null) ? $meta['description'] : null,
+                    is_array($meta['parameters'] ?? null) ? $meta['parameters'] : null,
+                );
                 $seen[$name] = true;
             }
         }

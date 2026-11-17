@@ -66,6 +66,9 @@ final class StackMountTest extends TestCase
         $this->assertStringContainsString('@runtypelabs/persona@4.39.0/dist/install.global.js', $html);
         $this->assertStringContainsString('/determly/chat/dispatch', $html);
         $this->assertStringContainsString('getHeaders', $html);
+        $this->assertStringContainsString('"windowKey":"determlyChat"', $html);
+        $this->assertStringContainsString('"webmcp":{"enabled":true}', $html);
+        $this->assertStringContainsString('readOnlyHint', $html);
         $this->assertStringContainsString(Widget::MARKER, $html);
         $this->assertStringNotContainsString('livewire', strtolower($html));
         $this->assertStringNotContainsString('inertia', strtolower($html));

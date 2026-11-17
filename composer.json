@@ -23,7 +23,8 @@
     "autoload-dev": {
         "psr-4": {
             "Determly\\Chat\\Tests\\": "packages/chat/tests/",
-            "Determly\\Chat\\Laravel\\Tests\\": "packages/chat-laravel/tests/"
+            "Determly\\Chat\\Laravel\\Tests\\": "packages/chat-laravel/tests/",
+            "Determly\\Chat\\Examples\\": "examples/support-chat/src/"
         }
     },
     "minimum-stability": "dev",
