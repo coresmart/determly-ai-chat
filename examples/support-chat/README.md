@@ -63,7 +63,7 @@ The visitor asks "Where is order 1001?".
 4. The library streams the answer. The SSE events are `tool_start`, `tool_complete`, `text_delta`, then `execution_complete`.
 5. The page hears `assistant:complete` and refreshes the orders table.
 
-A page tool is the other path. `resources/js/determly-chat.js` registers `refresh_orders` on `document.modelContext`. The widget sends it as a client tool with `origin: webmcp`. The runner pauses with `step_await`, `awaitReason: local_tool_required`, and `origin: webmcp`. Persona 4.39.0 runs the browser tool and posts `/determly/chat/dispatch/resume`. Read-only tools (`annotations.readOnlyHint`) skip the confirm bubble. Other page tools ask first.
+A page tool is the other path. `resources/js/determly-chat.js` registers `refresh_orders` on `document.modelContext`. The widget sends it as a client tool with `origin: webmcp`. The runner pauses with `await`, `awaitReason: local_tool_required`, and `origin: webmcp`. Persona 4.39.0 runs the browser tool and posts `/determly/chat/dispatch/resume`. Read-only tools (`annotations.readOnlyHint`) skip the confirm bubble. Other page tools ask first.
 
 Load the script from your layout. The widget is already injected before `</body>` unless `DETERMLY_CHAT_INJECT=false`.
 

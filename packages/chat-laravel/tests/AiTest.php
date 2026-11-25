@@ -131,11 +131,11 @@ final class AiTest extends TestCase
 
         $paused = $this->play($responder, $tools, $store);
         $this->assertSame(0, $tool->runs);
-        $this->assertSame('approval_required', $this->event($paused, 'step_await')->data['awaitReason']);
+        $this->assertSame('approval_required', $this->event($paused, 'await')->data['awaitReason']);
         $this->assertNotContains('execution_complete', $this->names($paused));
 
         $executionId = (string) $paused[0]->data['executionId'];
-        $approvalId = (string) $this->event($paused, 'step_await')->data['approvalId'];
+        $approvalId = (string) $this->event($paused, 'await')->data['approvalId'];
         $continued = $this->play($responder, $tools, $store, function (Runner $runner, $emit) use ($executionId, $approvalId): void {
             $runner->decide($executionId, $approvalId, 'denied', $emit);
         }, $executionId);
@@ -185,7 +185,7 @@ final class AiTest extends TestCase
             ]), $emit);
         });
 
-        $await = $this->event($paused, 'step_await');
+        $await = $this->event($paused, 'await');
         $this->assertSame('local_tool_required', $await->data['awaitReason']);
         $this->assertSame('page_cart', $await->data['toolName']);
         $this->assertNotContains('execution_complete', $this->names($paused));
@@ -242,7 +242,7 @@ final class AiTest extends TestCase
             ]), $emit);
         });
 
-        $await = $this->event($frames, 'step_await');
+        $await = $this->event($frames, 'await');
         $this->assertSame('refresh_orders', $await->data['toolName']);
         $this->assertSame('webmcp', $await->data['origin']);
     }

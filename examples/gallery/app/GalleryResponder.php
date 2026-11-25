@@ -203,13 +203,18 @@ final class GalleryResponder implements Responder
 
     private function actions(Turn $turn): iterable
     {
-        if ($this->awaitingClient($turn)) {
-            yield Step::tool('add_to_cart', ['sku' => 'SHOE-014', 'title' => 'Trail shoe']);
+        if ($this->resultSinceUser($turn, 'added to the cart') !== null) {
+            yield Step::text('The cart on the page now includes the trail shoe.');
+
+            return;
+        }
+        if ($this->resultSinceUser($turn) !== null) {
+            yield Step::text('The cart was not changed.');
 
             return;
         }
 
-        yield Step::text('The cart on the page now includes the trail shoe.');
+        yield Step::tool('add_to_cart', ['sku' => 'SHOE-014', 'title' => 'Trail shoe']);
     }
 
     private function feedback(): iterable
