@@ -7,10 +7,13 @@ namespace Determly\Chat\Laravel\Ai;
 use Determly\Chat\Tool;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\JsonSchema\Types\Type;
+use Prism\Prism\Contracts\Schema;
 use Prism\Prism\Schema\ArraySchema;
 use Prism\Prism\Schema\BooleanSchema;
+use Prism\Prism\Schema\EnumSchema;
 use Prism\Prism\Schema\NumberSchema;
 use Prism\Prism\Schema\ObjectSchema;
+use Prism\Prism\Schema\RawSchema;
 use Prism\Prism\Schema\StringSchema;
 use Prism\Prism\Tool as PrismTool;
 
@@ -36,12 +39,25 @@ final class ToolParameters
         return $mapped;
     }
 
-    public static function prism(Tool $tool): PrismTool
+    public static function prism(Tool $tool, bool $execute = false): PrismTool
     {
+        $callback = $execute
+            ? static function (mixed ...$arguments) use ($tool): string {
+                $parameters = [];
+                foreach ($arguments as $name => $value) {
+                    if (is_string($name)) {
+                        $parameters[$name] = $value;
+                    }
+                }
+
+                return ToolEquivalents::encode($tool->handle($parameters));
+            }
+            : static fn (mixed ...$arguments): string => '';
+
         $prism = (new PrismTool)
             ->as($tool->name())
             ->for($tool->description())
-            ->using(static fn (mixed ...$arguments): string => '');
+            ->using($callback);
 
         $required = self::requiredNames($tool);
         foreach (self::properties($tool) as $name => $property) {
@@ -167,20 +183,61 @@ final class ToolParameters
     /**
      * @param  array<string, mixed>  $property
      */
-    private static function prismSchema(string $name, array $property): StringSchema|NumberSchema|BooleanSchema|ArraySchema|ObjectSchema
+    private static function prismSchema(string $name, array $property): Schema
     {
         $description = is_string($property['description'] ?? null) && $property['description'] !== ''
             ? $property['description']
             : $name;
         $kind = is_string($property['type'] ?? null) ? $property['type'] : 'string';
+        $enum = self::enumValues($property);
+        if ($enum !== null && in_array($kind, ['string', 'integer', 'number'], true)) {
+            return new EnumSchema($name, $description, $enum);
+        }
 
         return match ($kind) {
-            'integer', 'number' => new NumberSchema($name, $description),
+            'integer' => new RawSchema($name, [
+                'description' => $description,
+                'type' => 'integer',
+            ]),
+            'number' => new NumberSchema($name, $description),
             'boolean' => new BooleanSchema($name, $description),
-            'array' => new ArraySchema($name, $description, new StringSchema('item', 'Item')),
+            'array' => new ArraySchema($name, $description, self::prismItem($property)),
             'object' => self::prismObject($name, $description, $property),
             default => new StringSchema($name, $description),
         };
+    }
+
+    /**
+     * @param  array<string, mixed>  $property
+     * @return list<string|int|float>|null
+     */
+    private static function enumValues(array $property): ?array
+    {
+        $enum = $property['enum'] ?? null;
+        if (! is_array($enum) || $enum === [] || ! array_is_list($enum)) {
+            return null;
+        }
+        $values = [];
+        foreach ($enum as $value) {
+            if (is_string($value) || is_int($value) || is_float($value)) {
+                $values[] = $value;
+            }
+        }
+
+        return $values === [] ? null : $values;
+    }
+
+    /**
+     * @param  array<string, mixed>  $property
+     */
+    private static function prismItem(array $property): Schema
+    {
+        $items = $property['items'] ?? null;
+        if (! is_array($items)) {
+            return new StringSchema('item', 'Item');
+        }
+
+        return self::prismSchema('item', $items);
     }
 
     /**
