@@ -10,4 +10,5 @@
     (string) config('determly-chat.dock_width', '420px'),
     (bool) config('determly-chat.artifacts', true),
     (bool) config('determly-chat.ask_user', true),
+    \Determly\Chat\Laravel\Theme::resolve(config('determly-chat.appearance')),
 ) !!}

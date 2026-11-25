@@ -49,3 +49,7 @@ Persona 4.39.0 renders a component when a message's raw JSON has a `component` s
 `emit_artifact_markdown` and `emit_artifact_component` are reserved tool names. The runner emits `artifact_start`, `artifact_delta` or `artifact_update`, and `artifact_complete`. It does not emit `tool_start` for them, because the widget hides those tool names and the pane is the visible result. Props for a component artifact are a JSON string so both Laravel AI and Prism can pass them.
 
 `features.askUserQuestion.expose` and `suggestions.followUps.expose` are on, so the widget advertises `ask_user_question` and `suggest_replies`. The mount is `floating` unless `DETERMLY_CHAT_MOUNT` is `docked` or `fullscreen`. A docked widget cannot target `body` or `html`. Voice and composer attachments are not part of this package.
+
+## Theme
+
+The widget appearance is Persona's own `colorScheme`, `brand`, and token tree (`theme` / `darkTheme`). Determly does not keep a second palette. `DETERMLY_CHAT_COLOR_SCHEME` and the brand env vars cover the short list. Nested tokens are `appearance.theme` and `appearance.dark_theme` in config, or `Determly\Chat\Laravel\Theme` assigned in PHP. An empty appearance omits those keys so Persona keeps its defaults. Brand colors must be opaque. The token tree only accepts `palette`, `semantic`, and `components`. Explicit tokens win over the brand, and `darkTheme` wins over `theme` in dark mode, which is Persona's order.

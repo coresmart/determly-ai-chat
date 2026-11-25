@@ -28,6 +28,7 @@ final class Widget
         string $dockWidth = '420px',
         bool $artifacts = true,
         bool $askUser = true,
+        Theme|array|null $theme = null,
     ): string {
         if (! in_array($mount, ['floating', 'docked', 'fullscreen'], true)) {
             throw new InvalidChat('Chat mount must be floating, docked, or fullscreen.');
@@ -84,6 +85,9 @@ final class Widget
         }
         if ($webmcp) {
             $config['config']['webmcp'] = ['enabled' => true];
+        }
+        foreach (Theme::resolve($theme)->persona() as $key => $value) {
+            $config['config'][$key] = $value;
         }
 
         $json = json_encode(

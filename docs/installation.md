@@ -414,10 +414,121 @@ Boolean env values accept `true`, `false`, `1`, `0`, `yes`, and `no`.
 | `DETERMLY_CHAT_DOCK_WIDTH` | `420px` | Docked panel width. |
 | `DETERMLY_CHAT_ARTIFACTS` | `true` | Artifact pane. |
 | `DETERMLY_CHAT_ASK` | `true` | Advertise `ask_user_question`. |
+| `DETERMLY_CHAT_COLOR_SCHEME` | `light` | `light`, `dark`, or `auto`. |
+| `DETERMLY_CHAT_ACCENT` | empty | Opaque brand color for buttons, links, and focus. |
+| `DETERMLY_CHAT_NEUTRAL` | empty | Opaque color for the coordinated background, surface, text, and borders. |
+| `DETERMLY_CHAT_FONT` | empty | CSS font-family. Load the font on the page. |
+| `DETERMLY_CHAT_RADIUS` | empty | `none`, `sm`, `md`, or `lg`. Corners are 0, 4, 8, or 16px. |
+| `DETERMLY_CHAT_DENSITY` | empty | `compact`, `comfortable`, or `spacious`. |
+| `DETERMLY_CHAT_ELEVATION` | empty | `flat`, `subtle`, or `raised`. |
 
 `path` defaults to `determly/chat/dispatch`. `agent_id` defaults to `determly`. Override those two in `config/determly-chat.php`. The approval URL is `{path}/v1/agents/{agent_id}/approve`. The widget strips a trailing `/v1/dispatch` from `apiUrl` when it builds that URL, so keep `path` ending in `/dispatch` if you change it.
 
-## 6. When the chat does not answer
+## 6. Theme
+
+Persona 4.39.0 paints the widget from three pieces. Determly passes them through and does not invent a second palette.
+
+- `colorScheme` is `light`, `dark`, or `auto`. `auto` follows a `dark` class on `<html>`, then the system preference.
+- `brand` is the short list: `accent`, `neutral`, `font`, `radius`, `density`, and `elevation`. Persona builds the coordinated colors from those.
+- `theme` and `darkTheme` are the token tree: `palette`, `semantic`, and `components`. A value here wins over the brand. `darkTheme` wins over `theme` while the widget is dark.
+
+Leave them empty and the widget keeps Persona's own colors. `php artisan determly:chat` prints `Theme: Persona defaults` in that case, or the scheme and the brand fields you set.
+
+Accent and neutral are opaque colors: `#rgb`, `#rrggbb`, `rgb()`, or `rgba()` with alpha `1`. A translucent accent is rejected. The font is a CSS `font-family` name. The page has to load that font. The theme does not accept `url()`.
+
+### From the environment
+
+```dotenv
+DETERMLY_CHAT_COLOR_SCHEME=auto
+DETERMLY_CHAT_ACCENT=#0f766e
+DETERMLY_CHAT_NEUTRAL=#f8fafc
+DETERMLY_CHAT_FONT=Georgia, "Times New Roman", serif
+DETERMLY_CHAT_RADIUS=lg
+DETERMLY_CHAT_DENSITY=comfortable
+DETERMLY_CHAT_ELEVATION=subtle
+```
+
+Those six brand fields and the color scheme are the only theme values read from the environment. Nested tokens are not env vars.
+
+### From config
+
+Create `config/determly-chat.php` in the app. Laravel merges it over the package file, and an `appearance` key in the app replaces the whole package `appearance` array, so include the brand fields you still want from the environment.
+
+```php
+return [
+    'appearance' => [
+        'color_scheme' => env('DETERMLY_CHAT_COLOR_SCHEME', 'auto'),
+        'brand' => [
+            'accent' => env('DETERMLY_CHAT_ACCENT', '#0f766e'),
+            'neutral' => env('DETERMLY_CHAT_NEUTRAL', '#f8fafc'),
+            'font' => env('DETERMLY_CHAT_FONT'),
+            'radius' => env('DETERMLY_CHAT_RADIUS', 'lg'),
+            'density' => env('DETERMLY_CHAT_DENSITY', 'comfortable'),
+            'elevation' => env('DETERMLY_CHAT_ELEVATION', 'subtle'),
+        ],
+        'theme' => [
+            'semantic' => [
+                'colors' => [
+                    'surface' => '#ffffff',
+                    'text' => '#134e4a',
+                ],
+            ],
+            'components' => [
+                'panel' => ['borderRadius' => '16px'],
+            ],
+        ],
+        'dark_theme' => [
+            'semantic' => [
+                'colors' => ['surface' => '#0f172a'],
+            ],
+        ],
+    ],
+];
+```
+
+`theme` only accepts `palette`, `semantic`, and `components`. A flat map such as `['primary' => '#111827']` is rejected. Semantic color names are `primary`, `secondary`, `accent`, `surface`, `background`, `container`, `text`, `textMuted`, `textInverse`, `border`, and `divider`. A color may also be a token reference such as `palette.colors.gray.900`.
+
+### From PHP
+
+`Determly\Chat\Laravel\Theme` builds the same array. Assign it in `AppServiceProvider::boot()`. The widget reads it when the page renders.
+
+```php
+use Determly\Chat\Laravel\Theme;
+
+public function boot(): void
+{
+    config([
+        'determly-chat.appearance' => Theme::make()
+            ->colorScheme('auto')
+            ->accent('#0f766e')
+            ->neutral('#f8fafc')
+            ->font('Georgia, "Times New Roman", serif')
+            ->radius('lg')
+            ->density('comfortable')
+            ->elevation('subtle')
+            ->colors([
+                'surface' => '#ffffff',
+                'text' => '#134e4a',
+            ])
+            ->tokens([
+                'components' => [
+                    'panel' => ['borderRadius' => '16px'],
+                ],
+            ])
+            ->darkTokens([
+                'semantic' => [
+                    'colors' => ['surface' => '#0f172a'],
+                ],
+            ]),
+    ]);
+}
+```
+
+`colors()` writes `theme.semantic.colors` and wins over the brand. `tokens()` and `darkTokens()` merge a deeper partial. Call `->persona()` if you need the array Persona receives (`colorScheme`, `brand`, `theme`, `darkTheme`) instead of the object.
+
+The gallery page [examples/theme](../examples/gallery) uses this class: teal `#0f766e`, a white surface, Georgia, and `radius('lg')`. Open `/examples/theme` after starting the gallery.
+
+## 7. When the chat does not answer
 
 | What you see | What to change |
 |---|---|
@@ -430,3 +541,4 @@ Boolean env values accept `true`, `false`, `1`, `0`, `yes`, and `no`.
 | Resume or approval says nothing is waiting | The default cache store is `array`, or the hour-long entry expired. |
 | Docked mount fails `determly:chat` | Set `DETERMLY_CHAT_TARGET` to a region other than `body` or `html`. |
 | A tool name is rejected | Use a lowercase identifier, at most 64 characters, and do not reuse `emit_artifact_markdown` or `emit_artifact_component`. |
+| `determly:chat` rejects the theme | The color scheme, brand field, or token tree does not match the lists in the theme section. A translucent accent and a flat color map are rejected. |

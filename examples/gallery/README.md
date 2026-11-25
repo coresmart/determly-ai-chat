@@ -45,6 +45,7 @@ The panel opens on load (`launcher.autoExpand`) and does not keep the transcript
 | Shadow-aware Page Context | http://127.0.0.1:8080/examples/shadow | `read_product` walks the product card inside the shadow root. |
 | Streaming Markdown Tables | http://127.0.0.1:8080/examples/tables | The orders table streams as text deltas. |
 | Tool and Reasoning Loaders | http://127.0.0.1:8080/examples/loaders | A reasoning row, a short pause, then `query_orders`. |
+| Theme | http://127.0.0.1:8080/examples/theme | A PHP `Theme`: teal accent, white surface, serif font, large radius. |
 
 Voice, bring-your-own voice, server TTS, text-reveal animations, custom loader graphics, and file attachments are named on the home page and are not routes.
 
